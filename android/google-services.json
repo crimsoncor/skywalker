@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "928729992732",
+    "project_id": "skywalkerapp-1aa4c",
+    "storage_bucket": "skywalkerapp-1aa4c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928729992732:android:0a39bb9e266cde5c2e19d9",
+        "android_client_info": {
+          "package_name": "com.gmail.mfnboer.skywalker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAggj8n6kqK_s8hiWl_k2ufkvWSsyMEIFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

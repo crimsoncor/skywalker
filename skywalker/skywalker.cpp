@@ -49,6 +49,8 @@ Skywalker::Skywalker(QObject* parent) :
             [this](const QString& text){ emit sharedTextReceived(text); });
     connect(&jniCallbackListener, &JNICallbackListener::sharedImageReceived, this,
             [this](const QString& contentUri, const QString& text){ shareImage(contentUri, text); });
+    connect(&jniCallbackListener, &JNICallbackListener::fcmToken, this,
+            [this](const QString& token){ registerPushNotifications(token); });
 }
 
 Skywalker::~Skywalker()
@@ -168,6 +170,20 @@ void Skywalker::refreshNotificationCount()
         },
         [](const QString& error, const QString& msg){
             qWarning() << "Failed to get unread notification count:" << error << " - " << msg;
+        });
+}
+
+void Skywalker::registerPushNotifications(const QString& token)
+{
+    Q_ASSERT(mBsky);
+    qDebug() << "Register push notifications";
+
+    mBsky->registerPushNotifications("did:web:api.bsky.app", token, "android", "com.gmail.mfnboer.skywalker",
+        []{
+            qDebug() << "Push notifications registered.";
+        },
+        [](const QString& error, const QString& msg){
+            qWarning() << "Failed to register push notifications:" << error << " - " << msg;
         });
 }
 
@@ -358,11 +374,9 @@ void Skywalker::syncTimeline(QDateTime tillTimestamp, int maxPages, const QStrin
         );
 }
 
-void Skywalker::finishTimelineSync(int index)
+static void finalizeStartup()
 {
-    // Inform the GUI about the timeline sync.
-    // This will show the timeline to the user.
-    emit timelineSyncOK(index);
+    JNICallbackListener::getFCMToken();
 
     // Now we can handle pending intent (content share).
     // If there is any, then this will open the post composition page. This should
@@ -370,10 +384,19 @@ void Skywalker::finishTimelineSync(int index)
     JNICallbackListener::handlePendingIntent();
 }
 
+void Skywalker::finishTimelineSync(int index)
+{
+    // Inform the GUI about the timeline sync.
+    // This will show the timeline to the user.
+    emit timelineSyncOK(index);
+
+    finalizeStartup();
+}
+
 void Skywalker::finishTimelineSyncFailed()
 {
     emit timelineSyncFailed();
-    JNICallbackListener::handlePendingIntent();
+    finalizeStartup();
 }
 
 void Skywalker::getTimeline(int limit, int maxPages, int minEntries, const QString& cursor)

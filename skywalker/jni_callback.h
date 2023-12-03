@@ -15,16 +15,20 @@ public:
     // the handling is started.
     static void handlePendingIntent();
 
+    static void getFCMToken();
+
     void handlePhotoPicked(int fd);
     void handlePhotoPickCanceled();
     void handleSharedTextReceived(const QString sharedText);
     void handleSharedImageReceived(const QString fileName, const QString text);
+    void handleFCMToken(const QString token);
 
 signals:
     void photoPicked(int fd);
     void photoPickCanceled();
     void sharedTextReceived(const QString sharedText);
     void sharedImageReceived(const QString fileName, const QString text);
+    void fcmToken(const QString token);
 
 private:
     JNICallbackListener();

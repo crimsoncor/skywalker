@@ -177,6 +177,7 @@ private:
     void stopRefreshTimers();
     void refreshSession();
     void refreshNotificationCount();
+    void registerPushNotifications(const QString& token);
     void updateUser(const QString& did, const QString& host, const QString& password);
     void saveSession(const ATProto::ComATProtoServer::Session& session);
     bool getSession(QString& host, ATProto::ComATProtoServer::Session& session);

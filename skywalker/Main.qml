@@ -161,6 +161,7 @@ ApplicationWindow {
             console.warn("SYNC FAILED")
             closeStartupStatus()
             getTimelineView().setInSync(0)
+            timelineUpdateTimer.start()
         }
 
         onTimelineRefreshed: (prevTopPostIndex) => {

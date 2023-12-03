@@ -14,6 +14,37 @@ Q_GLOBAL_STATIC(std::unique_ptr<JNICallbackListener>, gTheInstance);
 
 namespace {
 
+// TODO: duplicate code
+#if defined(Q_OS_ANDROID)
+bool checkPermission(const QString& permission)
+{
+    auto checkResult = QtAndroidPrivate::checkPermission(permission);
+    if (checkResult.result() != QtAndroidPrivate::Authorized)
+    {
+        qDebug() << "Permission check failed:" << permission;
+        auto requestResult = QtAndroidPrivate::requestPermission(permission);
+
+        if (requestResult.result() != QtAndroidPrivate::Authorized)
+        {
+            qWarning() << "No permission:" << permission;
+            return false;
+        }
+    }
+
+    return true;
+}
+#endif
+
+bool checkPostNotificationsPermission()
+{
+#if defined(Q_OS_ANDROID)
+    static const QString POST_NOTIFICATIONS = "android.permission.POST_NOTIFICATIONS";
+    return checkPermission(POST_NOTIFICATIONS);
+#else
+    return true;
+#endif
+}
+
 #if defined(Q_OS_ANDROID)
 void _handlePhotoPicked(JNIEnv*, jobject, jint fd)
 {
@@ -52,6 +83,16 @@ void _handleSharedImageReceived(JNIEnv* env, jobject, jstring jsFileName, jstrin
     if (instance)
         instance->handleSharedImageReceived(fileName, text);
 }
+
+void _handleFCMToken(JNIEnv* env, jobject, jstring jsToken)
+{
+    QString token = jsToken ? env->GetStringUTFChars(jsToken, nullptr) : QString();
+    qDebug() << "FCM token received:" << token;
+    auto& instance = *gTheInstance;
+
+    if (instance)
+        instance->handleFCMToken(token);
+}
 #endif
 
 }
@@ -79,6 +120,16 @@ void JNICallbackListener::handlePendingIntent()
 #endif
 }
 
+void JNICallbackListener::getFCMToken()
+{
+#if defined(Q_OS_ANDROID)
+    if (!checkPostNotificationsPermission())
+        return;
+
+    QJniObject::callStaticMethod<void>("com/gmail/mfnboer/SkywalkerActivity", "getFCMToken");
+#endif
+}
+
 JNICallbackListener::JNICallbackListener() : QObject()
 {
 #if defined(Q_OS_ANDROID)
@@ -92,9 +143,10 @@ JNICallbackListener::JNICallbackListener() : QObject()
 
     const JNINativeMethod skywalkerActivityCallbacks[] = {
         { "emitSharedTextReceived", "(Ljava/lang/String;)V", reinterpret_cast<void *>(_handleSharedTextReceived) },
-        { "emitSharedImageReceived", "(Ljava/lang/String;Ljava/lang/String;)V", reinterpret_cast<void *>(_handleSharedImageReceived) }
+        { "emitSharedImageReceived", "(Ljava/lang/String;Ljava/lang/String;)V", reinterpret_cast<void *>(_handleSharedImageReceived) },
+        { "emitFCMToken", "(Ljava/lang/String;)V", reinterpret_cast<void *>(_handleFCMToken) }
     };
-    jni.registerNativeMethods("com/gmail/mfnboer/SkywalkerActivity", skywalkerActivityCallbacks, 2);
+    jni.registerNativeMethods("com/gmail/mfnboer/SkywalkerActivity", skywalkerActivityCallbacks, 3);
 #endif
 }
 
@@ -116,6 +168,11 @@ void JNICallbackListener::handleSharedTextReceived(const QString sharedText)
 void JNICallbackListener::handleSharedImageReceived(const QString fileName, const QString text)
 {
     emit sharedImageReceived(fileName, text);
+}
+
+void JNICallbackListener::handleFCMToken(const QString token)
+{
+    emit fcmToken(token);
 }
 
 }

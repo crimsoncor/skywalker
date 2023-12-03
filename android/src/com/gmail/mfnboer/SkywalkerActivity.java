@@ -16,6 +16,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 public class SkywalkerActivity extends QtActivity {
     private static final String LOGTAG = "SkywalkerActivity";
     private static final int MAX_TEXT_LEN = 512;
@@ -24,6 +30,27 @@ public class SkywalkerActivity extends QtActivity {
 
     public static native void emitSharedTextReceived(String text);
     public static native void emitSharedImageReceived(String uri, String text);
+    public static native void emitFCMToken(String token);
+
+    public static void getFCMToken() {
+            Log.d(LOGTAG, "Get FCM token");
+
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnCompleteListener(new OnCompleteListener<String>() {
+                        @Override
+                        public void onComplete(@NonNull Task<String> task) {
+                            if (!task.isSuccessful()) {
+                                Log.w(LOGTAG, "Fetching FCM registration token failed", task.getException());
+                                return;
+                            }
+
+                            // Get new FCM registration token
+                            String token = task.getResult();
+                            Log.d(LOGTAG, "FCM Registration token: " + token);
+                            emitFCMToken(token);
+                        }
+                    });
+        }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
