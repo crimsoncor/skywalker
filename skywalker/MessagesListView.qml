@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import skywalker
 
 SkyPage {
@@ -51,7 +50,7 @@ SkyPage {
         id: messagesView
         width: parent.width
         height: parent.height - y - flick.height - newMessageText.padding - newMessageText.bottomPadding
-        model: chat.getMessageListModel(convo.id)
+        model: page.chat.getMessageListModel(page.convo.id)
         boundsMovement: Flickable.StopAtBounds
 
         onHeightChanged: moveToEnd()
@@ -348,39 +347,44 @@ SkyPage {
         id: guiSettings
     }
 
-    Connections {
-        target: Qt.inputMethod
-
-        function onKeyboardRectangleChanged() {
-            const keyboardY = Qt.inputMethod.keyboardRectangle.y  / Screen.devicePixelRatio
-
-            // NOTE: This function seems to be called many times when the keyboard
-            // pops up, with increasing Y values. The first Y value seems to be the
-            // position of the top of the keyboard, not sure where the others calls
-            // come from.
-            if (keyboardY > 0) {
-                if (!keyboardVisible) {
-                    const keyboardHeight = page.height - keyboardY
-
-                    // Shrink empty space between message list and text input. The
-                    // text input shifted up to make place for the keyboard.
-                    messagesView.y = Math.min(keyboardHeight, Math.max(messagesView.height - messagesView.contentHeight, 0))
-
-                    // Qt seems to scroll the whole window up!. Pull the header
-                    // down to make it visible
-                    header.y = keyboardHeight
-
-                    newMessageText.ensureVisible(newMessageText.cursorRectangle)
-                    keyboardVisible = true
-                }
-            }
-            else {
-                messagesView.y = 0
-                header.y = 0
-                keyboardVisible = false
-            }
-        }
+    VirtualKeyboardPageResizer {
+        id: virtualKeyboardPageResizer
     }
+
+    // TODO: it seems the VirtualKeyboardPageResizer works in Qt6.8.0 and this is not needed anymore.
+    // Connections {
+    //     target: Qt.inputMethod
+
+    //     function onKeyboardRectangleChanged() {
+    //         const keyboardY = Qt.inputMethod.keyboardRectangle.y  / Screen.devicePixelRatio
+
+    //         // NOTE: This function seems to be called many times when the keyboard
+    //         // pops up, with increasing Y values. The first Y value seems to be the
+    //         // position of the top of the keyboard, not sure where the others calls
+    //         // come from.
+    //         if (keyboardY > 0) {
+    //             if (!keyboardVisible) {
+    //                 const keyboardHeight = page.height - keyboardY
+
+    //                 // Shrink empty space between message list and text input. The
+    //                 // text input shifted up to make place for the keyboard.
+    //                 messagesView.y = Math.min(keyboardHeight, Math.max(messagesView.height - messagesView.contentHeight, 0))
+
+    //                 // Qt seems to scroll the whole window up!. Pull the header
+    //                 // down to make it visible
+    //                 header.y = keyboardHeight
+
+    //                 newMessageText.ensureVisible(newMessageText.cursorRectangle)
+    //                 keyboardVisible = true
+    //             }
+    //         }
+    //         else {
+    //             messagesView.y = 0
+    //             header.y = 0
+    //             keyboardVisible = false
+    //         }
+    //     }
+    // }
 
     function addMessage(msgText) {
         Qt.inputMethod.commit()
@@ -483,6 +487,7 @@ SkyPage {
     }
 
     Component.onCompleted: {
+        virtualKeyboardPageResizer.fullPageHeight = parent.height
         const inputTextHeight = newMessageText.height - newMessageText.padding - newMessageText.bottomPadding
         maxInputTextHeight = 5 * inputTextHeight
         positionTimer.gotoIndex(-1)
