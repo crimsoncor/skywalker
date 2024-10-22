@@ -2659,14 +2659,20 @@ void Skywalker::sharePost(const QString& postUri)
     Q_ASSERT(!shareUri.isEmpty());
 
 #ifdef Q_OS_ANDROID
+    if (!QNativeInterface::QAndroidApplication::isActivityContext())
+    {
+        qWarning() << "Cannot find Android activity";
+        return;
+    }
+
+    QJniObject activity = QNativeInterface::QAndroidApplication::context();
     QJniObject jShareUri = QJniObject::fromString(shareUri);
     QJniObject jSubject = QJniObject::fromString("post");
 
-    QJniObject::callStaticMethod<void>("com/gmail/mfnboer/ShareUtils",
-                                       "shareLink",
-                                       "(Ljava/lang/String;Ljava/lang/String;)V",
-                                       jShareUri.object<jstring>(),
-                                       jSubject.object<jstring>());
+    activity.callMethod<void>("shareLink",
+                              "(Ljava/lang/String;Ljava/lang/String;)V",
+                              jShareUri.object<jstring>(),
+                              jSubject.object<jstring>());
 #else
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(shareUri);
@@ -2686,14 +2692,20 @@ void Skywalker::shareFeed(const GeneratorView& feed)
     Q_ASSERT(!shareUri.isEmpty());
 
 #ifdef Q_OS_ANDROID
+    if (!QNativeInterface::QAndroidApplication::isActivityContext())
+    {
+        qWarning() << "Cannot find Android activity";
+        return;
+    }
+
+    QJniObject activity = QNativeInterface::QAndroidApplication::context();
     QJniObject jShareUri = QJniObject::fromString(shareUri);
     QJniObject jSubject = QJniObject::fromString("feed");
 
-    QJniObject::callStaticMethod<void>("com/gmail/mfnboer/ShareUtils",
-                                       "shareLink",
-                                       "(Ljava/lang/String;Ljava/lang/String;)V",
-                                       jShareUri.object<jstring>(),
-                                       jSubject.object<jstring>());
+    activity.callMethod<void>("shareLink",
+                              "(Ljava/lang/String;Ljava/lang/String;)V",
+                              jShareUri.object<jstring>(),
+                              jSubject.object<jstring>());
 #else
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(shareUri);
@@ -2714,14 +2726,20 @@ void Skywalker::shareList(const ListView& list)
     Q_ASSERT(!shareUri.isEmpty());
 
 #ifdef Q_OS_ANDROID
+    if (!QNativeInterface::QAndroidApplication::isActivityContext())
+    {
+        qWarning() << "Cannot find Android activity";
+        return;
+    }
+
+    QJniObject activity = QNativeInterface::QAndroidApplication::context();
     QJniObject jShareUri = QJniObject::fromString(shareUri);
     QJniObject jSubject = QJniObject::fromString("list");
 
-    QJniObject::callStaticMethod<void>("com/gmail/mfnboer/ShareUtils",
-                                       "shareLink",
-                                       "(Ljava/lang/String;Ljava/lang/String;)V",
-                                       jShareUri.object<jstring>(),
-                                       jSubject.object<jstring>());
+    activity.callMethod<void>("shareLink",
+                              "(Ljava/lang/String;Ljava/lang/String;)V",
+                              jShareUri.object<jstring>(),
+                              jSubject.object<jstring>());
 #else
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(shareUri);
@@ -2735,14 +2753,20 @@ void Skywalker::shareAuthor(const BasicProfile& author)
     const QString shareUri = QString("https://bsky.app/profile/%1").arg(authorId);
 
 #ifdef Q_OS_ANDROID
+    if (!QNativeInterface::QAndroidApplication::isActivityContext())
+    {
+        qWarning() << "Cannot find Android activity";
+        return;
+    }
+
+    QJniObject activity = QNativeInterface::QAndroidApplication::context();
     QJniObject jShareUri = QJniObject::fromString(shareUri);
     QJniObject jSubject = QJniObject::fromString("author profile");
 
-    QJniObject::callStaticMethod<void>("com/gmail/mfnboer/ShareUtils",
-                                       "shareLink",
-                                       "(Ljava/lang/String;Ljava/lang/String;)V",
-                                       jShareUri.object<jstring>(),
-                                       jSubject.object<jstring>());
+    activity.callMethod<void>("shareLink",
+                              "(Ljava/lang/String;Ljava/lang/String;)V",
+                              jShareUri.object<jstring>(),
+                              jSubject.object<jstring>());
 #else
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(shareUri);

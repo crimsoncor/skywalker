@@ -9,12 +9,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+// TODO: remove
 public class ShareUtils {
     private static final String LOGTAG = "ShareUtils";
 
     public static void shareLink(String uriString, String subject) {
-        if (QtNative.activity() == null)
-            return;
+        // if (QtNative.activity() == null)
+        //     return;
 
         Uri uri;
         try {
@@ -33,8 +34,8 @@ public class ShareUtils {
         intent.setAction(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_TEXT, uriString);
         intent.setType("text/plain");
-        QtNative.activity().startActivity(
-                Intent.createChooser(intent, "Share " + subject + " using:"));
+        // QtNative.activity().startActivity(
+        //         Intent.createChooser(intent, "Share " + subject + " using:"));
     }
 
 

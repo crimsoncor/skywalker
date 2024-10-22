@@ -8,7 +8,6 @@ import com.gmail.mfnboer.NewMessageChecker;
 import com.gmail.mfnboer.NewMessageNotifier;
 import com.gmail.mfnboer.VideoTranscoder;
 
-import org.qtproject.qt.android.QtNative;
 import org.qtproject.qt.android.bindings.QtActivity;
 
 import java.lang.String;
@@ -239,5 +238,26 @@ public class SkywalkerActivity extends QtActivity {
                 VideoTranscoder.transcodeVideo(inputFilePath, outputFilePath, height, startMs, endMs);
             }
         });
+    }
+
+    public void shareLink(String uriString, String subject) {
+        Uri uri;
+        try {
+            uri = Uri.parse(uriString);
+        } catch (Exception e) {
+            Log.d(LOGTAG, "invalid uri");
+            return;
+        }
+
+        if (uri == null) {
+            Log.d(LOGTAG, "invalid uri");
+            return;
+        }
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, uriString);
+        intent.setType("text/plain");
+        startActivity(Intent.createChooser(intent, "Share " + subject + " using:"));
     }
 }

@@ -3,9 +3,8 @@
 
 package com.gmail.mfnboer;
 
-import org.qtproject.qt.android.QtNative;
-
 import com.gmail.mfnboer.FileUtils;
+import com.gmail.mfnboer.SkywalkerApplication;
 
 import java.lang.String;
 //import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia;
@@ -33,7 +32,7 @@ public class QPhotoPicker extends AppCompatActivity {
 
     public static void start(boolean video) {
         pickVideo = video;
-        Context context = QtNative.getContext();
+        Context context = SkywalkerApplication.getContext();
         Intent intent = new Intent(context, QPhotoPicker.class);
         context.startActivity(intent);
     }
@@ -61,7 +60,7 @@ public class QPhotoPicker extends AppCompatActivity {
             Uri uri = data.getData();
 
             if (uri != null) {
-                Context context = QtNative.getContext();
+                Context context = SkywalkerApplication.getContext();
                 String mimeType = context.getContentResolver().getType(uri);
                 Log.d("PhotoPicker", "Selected URI: " + uri + " mimetype: " + mimeType);
                 int fd = FileUtils.openContentUri(uri);
@@ -91,7 +90,7 @@ public class QPhotoPicker extends AppCompatActivity {
     //             @Override
     //             public void onActivityResult(Uri uri) {
     //                 if (uri != null) {
-    //                     Context context = QtNative.getContext();
+    //                     Context context = SkywalkerApplication.getContext();
     //                     String mimeType = context.getContentResolver().getType(uri);
     //                     Log.d("PhotoPicker", "Selected URI: " + uri + " mimetype: " + mimeType);
     //                     int fd = FileUtils.openContentUri(uri);
