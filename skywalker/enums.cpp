@@ -4,6 +4,8 @@
 
 namespace Skywalker {
 
+QEnums::QEnums(QObject* parent) : QObject(parent) {}
+
 QEnums::ContentPrefVisibility QEnums::toContentPrefVisibility(ContentVisibility visibilty)
 {
     switch (visibilty)

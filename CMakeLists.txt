@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.22)
 
 project(appskywalker VERSION 3.5 LANGUAGES CXX)
 set(VERSION_CODE 50)
@@ -11,7 +11,8 @@ set(CMAKE_AUTORCC ON)
 include(FetchContent)
 find_package(Qt6 REQUIRED COMPONENTS Core Quick QuickControls2 Multimedia)
 
-qt_standard_project_setup()
+qt_standard_project_setup(REQUIRES 6.8)
+qt_policy(SET QTP0004 NEW)
 
 add_compile_definitions(APP_VERSION="${APP_VERSION}")
 add_compile_definitions(TENOR_API_KEY="$ENV{TENOR_API_KEY}")

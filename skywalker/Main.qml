@@ -1,4 +1,3 @@
-import QtCore
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -102,7 +101,7 @@ ApplicationWindow {
         onLoginOk: start()
 
         onLoginFailed: (error, msg, host, handleOrDid, password) => {
-            closeStartupStatus()
+            root.closeStartupStatus()
 
             if (handleOrDid.startsWith("did:")) {
                 const did = handleOrDid
@@ -117,47 +116,47 @@ ApplicationWindow {
         onResumeSessionOk: start()
 
         onResumeSessionFailed: (error) => {
-            closeStartupStatus()
+            root.closeStartupStatus()
 
             if (skywalker.autoLogin()) {
-                showStartupStatus()
+                root.showStartupStatus()
                 return
             }
 
             if (error)
                 statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
 
-            signOutCurrentUser()
-            signIn()
+            root.signOutCurrentUser()
+            root.signIn()
         }
 
         onSessionExpired: (error) => {
-            closeStartupStatus()
+            root.closeStartupStatus()
             statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
-            signOutCurrentUser()
-            signIn()
+            root.signOutCurrentUser()
+            root.signIn()
         }
 
         onSessionDeleted: {
-            signOutCurrentUser()
-            signIn()
+            root.signOutCurrentUser()
+            root.signIn()
         }
 
         onStatusMessage: (msg, level) => statusPopup.show(msg, level, level === QEnums.STATUS_LEVEL_INFO ? 2 : 30)
-        onPostThreadOk: (modelId, postEntryIndex) => viewPostThread(modelId, postEntryIndex)
+        onPostThreadOk: (modelId, postEntryIndex) => root.viewPostThread(modelId, postEntryIndex)
         onGetUserProfileOK: () => skywalker.getUserPreferences()
 
         onGetUserProfileFailed: (error) => {
             console.warn("FAILED TO LOAD USER PROFILE:", error)
-            closeStartupStatus()
+            root.closeStartupStatus()
             statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
-            signOutCurrentUser()
-            signIn()
+            root.signOutCurrentUser()
+            root.signIn()
         }
 
         onGetUserPreferencesOK: () => skywalker.dataMigration();
 
-        onDataMigrationStatus: (status) => setStartupStatus(status)
+        onDataMigrationStatus: (status) => root.setStartupStatus(status)
 
         onDataMigrationDone: () => {
             const did = skywalker.getUserDid()
@@ -177,31 +176,31 @@ ApplicationWindow {
 
         onGetUserPreferencesFailed: (error) => {
             console.warn("FAILED TO LOAD USER PREFERENCES")
-            closeStartupStatus()
+            root.closeStartupStatus()
             statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
-            signOutCurrentUser()
-            signIn()
+            root.signOutCurrentUser()
+            root.signIn()
         }
 
         onTimelineSyncOK: (index) => {
-            syncTimelineToPost(index)
+            root.syncTimelineToPost(index)
         }
 
         onTimelineSyncFailed: {
             console.warn("SYNC FAILED")
-            syncTimelineToPost(0)
+            root.syncTimelineToPost(0)
         }
 
         onTimelineRefreshed: (prevTopPostIndex) => {
             console.debug("Time line refreshed, prev top post index:", prevTopPostIndex)
 
             if (prevTopPostIndex > 0)
-                getTimelineView().moveToPost(prevTopPostIndex - 1)
+                root.getTimelineView().moveToPost(prevTopPostIndex - 1)
         }
 
         onGapFilled: (gapEndIndex) => {
             console.debug("Gap filled, end index:", gapEndIndex)
-            getTimelineView().moveToPost(gapEndIndex)
+            root.getTimelineView().moveToPost(gapEndIndex)
         }
 
         onGetDetailedProfileOK: (profile) => {
@@ -214,16 +213,16 @@ ApplicationWindow {
 
         onGetFeedGeneratorOK: (generatorView, viewPosts) => {
             if (viewPosts)
-                viewPostFeed(generatorView)
+                root.viewPostFeed(generatorView)
             else
-                viewFeedDescription(generatorView)
+                root.viewFeedDescription(generatorView)
         }
 
-        onGetStarterPackViewOk: (starterPack) => viewStarterPack(starterPack)
+        onGetStarterPackViewOk: (starterPack) => root.viewStarterPack(starterPack)
 
         onSharedTextReceived: (text) => {
-            closeStartupStatus() // close startup status if sharing started the app                      
-            let item = currentStackItem()
+            root.closeStartupStatus() // close startup status if sharing started the app
+            let item = root.currentStackItem()
 
             if (item instanceof ComposePost)
                 item.addSharedText(text)
@@ -237,7 +236,7 @@ ApplicationWindow {
 
         // "file://" or "image://" source
         onSharedImageReceived: (source, gifTempFileName, text) => {
-            closeStartupStatus() // close startup status if sharing started the app
+            root.closeStartupStatus() // close startup status if sharing started the app
 
             if (!gifTempFileName) {
                 handleSharedImageReceived(source, text)
@@ -252,7 +251,7 @@ ApplicationWindow {
         }
 
         function handleSharedImageReceived(source, text) {
-            let item = currentStackItem()
+            let item = root.currentStackItem()
 
             if (item instanceof ComposePost)
                 item.addSharedPhoto(source, text)
@@ -265,12 +264,12 @@ ApplicationWindow {
         }
 
         onSharedVideoReceived: (source, text) => {
-            closeStartupStatus() // close startup status if sharing started the app
+            root.closeStartupStatus() // close startup status if sharing started the app
             handleSharedVideoReceived(source, text)
         }
 
         function handleSharedVideoReceived(source, text) {
-            let item = currentStackItem()
+            let item = root.currentStackItem()
 
             if (item instanceof ComposePost)
                 item.addSharedVideo(source, text)
@@ -283,8 +282,8 @@ ApplicationWindow {
         }
 
         onSharedDmTextReceived: (text) => {
-            closeStartupStatus() // close startup status if sharing started the app
-            let item = currentStackItem()
+            root.closeStartupStatus() // close startup status if sharing started the app
+            let item = root.currentStackItem()
 
             if (item instanceof MessagesListView)
                 item.addMessage(text)
@@ -292,8 +291,8 @@ ApplicationWindow {
                 startConvo(text)
         }
 
-        onShowNotifications: viewNotifications()
-        onShowDirectMessages: viewChat()
+        onShowNotifications: root.viewNotifications()
+        onShowDirectMessages: root.viewChat()
 
         onAnniversary: {
             const years = skywalker.getAnniversary().getAnniversaryYears()
@@ -303,7 +302,7 @@ ApplicationWindow {
         }
 
         function start() {
-            setStartupStatus(qsTr("Loading user profile"))
+            root.setStartupStatus(qsTr("Loading user profile"))
             skywalker.getUserProfileAndFollows()
         }
     }
@@ -407,8 +406,8 @@ ApplicationWindow {
         dragMargin: 0
         modal: true
 
-        onAboutToShow: enablePopupShield(true)
-        onAboutToHide: enablePopupShield(false)
+        onAboutToShow: root.enablePopupShield(true)
+        onAboutToHide: root.enablePopupShield(false)
 
         onProfile: {
             let did = skywalker.getUserDid()
@@ -430,14 +429,14 @@ ApplicationWindow {
         onBookmarks: {
             let component = Qt.createComponent("Bookmarks.qml")
             let page = component.createObject(root, { skywalker: skywalker })
-            page.onClosed.connect(() => { popStack() })
+            page.onClosed.connect(() => { root.popStack() })
             pushStack(page)
             skywalker.getBookmarksPage()
             close()
         }
 
         onContentFiltering: {
-            editContentFilterSettings()
+            root.editContentFilterSettings()
             close()
         }
 
@@ -483,7 +482,7 @@ ApplicationWindow {
         onMutedWords: {
             let component = Qt.createComponent("MutedWords.qml")
             let page = component.createObject(root, { skywalker: skywalker })
-            page.onClosed.connect(() => { popStack() })
+            page.onClosed.connect(() => { root.popStack() })
             pushStack(page)
             close()
         }
@@ -491,18 +490,18 @@ ApplicationWindow {
         onFocusHashtags: {
             let component = Qt.createComponent("FocusHashtags.qml")
             let page = component.createObject(root)
-            page.onClosed.connect(() => { popStack() })
+            page.onClosed.connect(() => { root.popStack() })
             pushStack(page)
             close()
         }
 
         onSettings: {
-            editSettings()
+            root.editSettings()
             close()
         }
 
         onSwitchAccount: {
-            selectUser()
+            root.selectUser()
             close()
         }
 
@@ -512,7 +511,7 @@ ApplicationWindow {
         }
 
         onAbout: {
-            showAbout()
+            root.showAbout()
             close()
         }
 
@@ -535,28 +534,28 @@ ApplicationWindow {
         dragMargin: 0
         modal: true
 
-        onAboutToShow: enablePopupShield(true)
-        onAboutToHide: enablePopupShield(false)
+        onAboutToShow: root.enablePopupShield(true)
+        onAboutToHide: root.enablePopupShield(false)
 
         onSelectedUser: (profile) => {
             if (!profile.did) {
-                signOutCurrentUser()
-                newUser()
+                root.signOutCurrentUser()
+                root.newUser()
             }
             else if (profile.did !== skywalker.getUserDid()) {
-                signOutCurrentUser()
+                root.signOutCurrentUser()
                 skywalker.switchUser(profile.did)
 
                 if (skywalker.resumeSession()) {
-                    showStartupStatus()
+                    root.showStartupStatus()
                 }
                 else if (skywalker.autoLogin()) {
-                    showStartupStatus()
+                    root.showStartupStatus()
                 }
                 else {
                     const userSettings = skywalker.getUserSettings()
                     const host = userSettings.getHost(profile.did)
-                    loginUser(host, profile.handle, profile.did)
+                    root.loginUser(host, profile.handle, profile.did)
                 }
             }
 
@@ -585,8 +584,8 @@ ApplicationWindow {
         dragMargin: 0
         modal: true
 
-        onAboutToShow: enablePopupShield(true)
-        onAboutToHide: enablePopupShield(false)
+        onAboutToShow: root.enablePopupShield(true)
+        onAboutToHide: root.enablePopupShield(false)
 
         Column {
             id: menuColumn
@@ -638,7 +637,7 @@ ApplicationWindow {
                 enabled: !repostDrawer.repostEmbeddingDisabled
                 onClicked: {
                     const link = linkUtils.toHttpsLink(repostDrawer.repostUri)
-                    startConvo(link)
+                    root.startConvo(link)
                     repostDrawer.close()
                 }
             }
@@ -730,7 +729,7 @@ ApplicationWindow {
         onWebLink: (link) => Qt.openUrlExternally(link)
         onPostLink: (atUri) => skywalker.getPostThread(atUri)
         onFeedLink: (atUri) => skywalker.getFeedGenerator(atUri, true)
-        onListLink: (atUri) => viewListByUri(atUri, true)
+        onListLink: (atUri) => root.viewListByUri(atUri, true)
         onAuthorLink: (handle) => skywalker.getDetailedProfile(handle)
     }
 
@@ -740,9 +739,9 @@ ApplicationWindow {
 
         onGetListOk: (list, viewPosts) => {
             if (viewPosts)
-                viewList(list)
+                root.viewList(list)
             else
-                viewListFeedDescription(list)
+                root.viewListFeedDescription(list)
         }
         onGetListFailed: (error) => statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
     }

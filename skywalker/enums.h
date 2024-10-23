@@ -17,6 +17,8 @@ class QEnums : public QObject
     QML_ELEMENT
 
 public:
+    explicit QEnums(QObject* parent = nullptr);
+
     enum DisplayMode
     {
         DISPLAY_MODE_SYSTEM = 0,

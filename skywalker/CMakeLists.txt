@@ -26,7 +26,7 @@ include_directories(..)
 qt_add_qml_module(libskywalker
     URI skywalker
     VERSION ${PROJECT_VERSION}
-    IMPORT_PATH ..
+    RESOURCE_PREFIX /
     SOURCES
         skywalker.h
         skywalker.cpp

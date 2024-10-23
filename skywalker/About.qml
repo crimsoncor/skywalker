@@ -1,7 +1,4 @@
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
-import skywalker
 
 SkyPage {
     signal closed()

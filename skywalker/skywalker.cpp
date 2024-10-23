@@ -2676,7 +2676,7 @@ void Skywalker::sharePost(const QString& postUri)
 #else
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(shareUri);
-    emit statusMessage(tr("Post link copied to clipboard"));
+    emit statusMessage(tr("Post link copied to clipboard"), QEnums::STATUS_LEVEL_INFO);
 #endif
 }
 
@@ -2709,7 +2709,7 @@ void Skywalker::shareFeed(const GeneratorView& feed)
 #else
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(shareUri);
-    emit statusMessage(tr("Feed link copied to clipboard"));
+    emit statusMessage(tr("Feed link copied to clipboard"), QEnums::STATUS_LEVEL_INFO);
 #endif
 }
 
@@ -2743,7 +2743,7 @@ void Skywalker::shareList(const ListView& list)
 #else
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(shareUri);
-    emit statusMessage(tr("List link copied to clipboard"));
+    emit statusMessage(tr("List link copied to clipboard"), QEnums::STATUS_LEVEL_INFO);
 #endif
 }
 
@@ -2770,7 +2770,7 @@ void Skywalker::shareAuthor(const BasicProfile& author)
 #else
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(shareUri);
-    emit statusMessage(tr("Author link copied to clipboard"));
+    emit statusMessage(tr("Author link copied to clipboard"), QEnums::STATUS_LEVEL_INFO);
 #endif
 }
 
@@ -2778,14 +2778,14 @@ void Skywalker::copyPostTextToClipboard(const QString& text)
 {
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(text);
-    emit statusMessage(tr("Post text copied to clipboard"));
+    emit statusMessage(tr("Post text copied to clipboard"), QEnums::STATUS_LEVEL_INFO);
 }
 
 void Skywalker::copyToClipboard(const QString& text)
 {
     QClipboard *clipboard = QGuiApplication::clipboard();
     clipboard->setText(text);
-    emit statusMessage(tr("Copied to clipboard"));
+    emit statusMessage(tr("Copied to clipboard"), QEnums::STATUS_LEVEL_INFO);
 }
 
 ContentGroup Skywalker::getContentGroup(const QString& did, const QString& labelId) const
