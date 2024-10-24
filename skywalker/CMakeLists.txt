@@ -27,8 +27,6 @@ qt_add_qml_module(libskywalker
     URI skywalker
     VERSION ${PROJECT_VERSION}
     RESOURCE_PREFIX /
-    DEPENDENCIES
-        QtQuick
     SOURCES
         skywalker.h
         skywalker.cpp
@@ -106,7 +104,7 @@ qt_add_qml_module(libskywalker
         RoundedFrame.qml
         ThumbImageView.qml
         FullImageView.qml
-        SkySvg.qml
+        SvgImage.qml
         StatIcon.qml
         StatusPopup.qml
         TimelineView.qml

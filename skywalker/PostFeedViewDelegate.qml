@@ -175,12 +175,12 @@ Rectangle {
                 height: parent.height
                 color: guiSettings.backgroundColor
 
-                SkySvg {
+                SvgImage {
                     anchors.right: parent.right
                     width: 18
                     height: width
                     color: Material.color(Material.Grey)
-                    svg: SvgFilled.pin
+                    svg: svgFilled.pin
                 }
             }
         }
@@ -209,12 +209,12 @@ Rectangle {
                 height: parent.height
                 color: guiSettings.backgroundColor
 
-                SkySvg {
+                SvgImage {
                     anchors.right: parent.right
                     width: 18
                     height: width
                     color: Material.color(Material.Grey)
-                    svg: SvgOutline.repost
+                    svg: svgOutline.repost
                 }
             }
         }
@@ -356,7 +356,7 @@ Rectangle {
                 sourceComponent: ReplyToRow {
                     width: parent.width
                     text: qsTr("Reply hidden by you")
-                    svg: SvgOutline.hideVisibility
+                    svg: svgOutline.hideVisibility
                 }
             }
 

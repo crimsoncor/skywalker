@@ -1,7 +1,7 @@
 import QtQuick
 import skywalker
 
-SkySvg {
+SvgImage {
     y: height + 5
     anchors.rightMargin: 10
     anchors.right: parent.right

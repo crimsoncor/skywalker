@@ -112,12 +112,12 @@ Rectangle {
                 Accessible.name: feedPinned ? qsTr("remove from favorites") : qsTr("add to favorites")
                 Accessible.onPressAction: favoriteClicked(feed, !feedPinned)
 
-                SkySvg {
+                SvgImage {
                     id: favoIcon
                     width: 40
                     height: width
                     color: feedPinned ? guiSettings.favoriteColor : guiSettings.statsColor
-                    svg: feedPinned ? SvgFilled.star : SvgOutline.star
+                    svg: feedPinned ? svgFilled.star : svgOutline.star
                 }
 
                 MouseArea {
@@ -134,7 +134,7 @@ Rectangle {
                 flat: feedSaved
                 iconColor: flat ? guiSettings.textColor : guiSettings.buttonTextColor
                 Material.background: flat ? guiSettings.labelColor : guiSettings.buttonColor
-                svg: feedSaved ? SvgOutline.remove : SvgOutline.add
+                svg: feedSaved ? svgOutline.remove : svgOutline.add
                 accessibleName: feedSaved ? qsTr("remove from saved feeds") : qsTr("save feed")
                 onClicked: addClicked(feed, !feedSaved)
             }
@@ -187,7 +187,7 @@ Rectangle {
                 id: likeIcon
                 width: parent.width / 2
                 iconColor: feedLikeUri ? guiSettings.likeColor : guiSettings.statsColor
-                svg: feedLikeUri ? SvgFilled.like : SvgOutline.like
+                svg: feedLikeUri ? svgFilled.like : svgOutline.like
                 statistic: feedLikeCount
                 onClicked: root.likeFeed(feedLikeUri, feed.uri, feed.cid)
 
@@ -202,7 +202,7 @@ Rectangle {
             StatIcon {
                 width: parent.width / 2
                 iconColor: guiSettings.statsColor
-                svg: SvgOutline.moreVert
+                svg: svgOutline.moreVert
                 onClicked: moreMenu.open()
 
                 Accessible.name: qsTr("more options")
@@ -220,19 +220,19 @@ Rectangle {
                         enabled: feed.description
                         onTriggered: root.translateText(feed.description)
 
-                        MenuItemSvg { svg: SvgOutline.googleTranslate }
+                        MenuItemSvg { svg: svgOutline.googleTranslate }
                     }
                     AccessibleMenuItem {
                         text: qsTr("Share")
                         onTriggered: skywalker.shareFeed(feed)
 
-                        MenuItemSvg { svg: SvgOutline.share }
+                        MenuItemSvg { svg: svgOutline.share }
                     }
                     AccessibleMenuItem {
                         text: qsTr("Report feed")
                         onTriggered: root.reportFeed(feed)
 
-                        MenuItemSvg { svg: SvgOutline.report }
+                        MenuItemSvg { svg: svgOutline.report }
                     }
                 }
             }

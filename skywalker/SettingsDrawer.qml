@@ -87,7 +87,7 @@ Drawer {
 
             SkyMenuItem {
                 id: profileItem
-                icon: SvgOutline.user
+                icon: svgOutline.user
                 text: qsTr("Profile")
                 onClicked: profile()
             }
@@ -95,21 +95,21 @@ Drawer {
             // Bluesky does not use invite codes anymore. New atproto providers may
             // SkyMenuItem {
             //     id: inviteCodesItem
-            //     icon: SvgOutline.inviteCode
+            //     icon: svgOutline.inviteCode
             //     text: qsTr("Invite Codes") + ` (${inviteCodeCount})`
             //     onClicked: inviteCodes()
             // }
 
             SkyMenuItem {
                 id: bookmarksItem
-                icon: SvgOutline.bookmark
+                icon: svgOutline.bookmark
                 text: qsTr("Bookmarks")
                 onClicked: bookmarks()
             }
 
             SkyMenuItem {
                 id: moderationItem
-                icon: SvgOutline.moderation
+                icon: svgOutline.moderation
                 text: qsTr("Moderation")
                 onClicked: moderationMenu.open()
 
@@ -128,78 +128,78 @@ Drawer {
                         text: qsTr("Content Filtering")
                         onTriggered: contentFiltering()
 
-                        MenuItemSvg { svg: SvgOutline.visibility }
+                        MenuItemSvg { svg: svgOutline.visibility }
                     }
                     AccessibleMenuItem {
                         text: qsTr("Blocked Accounts")
                         onTriggered: blockedAccounts()
 
-                        MenuItemSvg { svg: SvgOutline.block }
+                        MenuItemSvg { svg: svgOutline.block }
                     }
                     AccessibleMenuItem {
                         text: qsTr("Muted Accounts")
                         onTriggered: mutedAccounts()
 
-                        MenuItemSvg { svg: SvgOutline.mute }
+                        MenuItemSvg { svg: svgOutline.mute }
                     }
                     AccessibleMenuItem {
                         text: qsTr("Muted Reposts")
                         onTriggered: mutedReposts()
 
-                        MenuItemSvg { svg: SvgOutline.repost }
+                        MenuItemSvg { svg: svgOutline.repost }
                     }
                     AccessibleMenuItem {
                         text: qsTr("Moderation Lists")
                         onTriggered: modLists()
 
-                        MenuItemSvg { svg: SvgOutline.list }
+                        MenuItemSvg { svg: svgOutline.list }
                     }
                     AccessibleMenuItem {
                         text: qsTr("Muted Words")
                         onTriggered: mutedWords()
 
-                        MenuItemSvg { svg: SvgOutline.mutedWords }
+                        MenuItemSvg { svg: svgOutline.mutedWords }
                     }
                     AccessibleMenuItem {
                         text: qsTr("Focus Hashtags")
                         onTriggered: focusHashtags()
 
-                        MenuItemSvg { svg: SvgOutline.hashtag }
+                        MenuItemSvg { svg: svgOutline.hashtag }
                     }
                 }
             }
 
             SkyMenuItem {
                 id: userListsItem
-                icon: SvgOutline.list
+                icon: svgOutline.list
                 text: qsTr("User Lists")
                 onClicked: userLists()
             }
 
             SkyMenuItem {
                 id: settingsItem
-                icon: SvgOutline.settings
+                icon: svgOutline.settings
                 text: qsTr("Settings")
                 onClicked: settings()
             }
 
             SkyMenuItem {
                 id: switchAccountItem
-                icon: SvgOutline.group
+                icon: svgOutline.group
                 text: qsTr("Switch Account")
                 onClicked: switchAccount()
             }
 
             SkyMenuItem {
                 id: signOutItem
-                icon: SvgOutline.signOut
+                icon: svgOutline.signOut
                 text: qsTr("Sign Out")
                 onClicked: signOut()
             }
 
             SkyMenuItem {
                 id: aboutItem
-                icon: SvgOutline.info
+                icon: svgOutline.info
                 text: qsTr("About")
                 onClicked: about()
             }
@@ -228,7 +228,7 @@ Drawer {
             id: closeButton
             anchors.right: userColumn.right
             anchors.top: userColumn.top
-            svg: SvgOutline.close
+            svg: svgOutline.close
             accessibleName: qsTr("close menu")
             onClicked: drawer.close()
         }

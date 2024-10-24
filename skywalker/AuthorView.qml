@@ -1,7 +1,5 @@
-pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Material
 import QtQuick.Layouts
 import skywalker
 import atproto
@@ -57,9 +55,9 @@ SkyPage {
             id: bannerImg
             anchors.top: parent.top
             width: parent.width
-            source: page.authorBanner
+            source: authorBanner
             fillMode: Image.PreserveAspectFit
-            visible: page.authorBanner && page.contentVisible() && status === Image.Ready
+            visible: authorBanner && contentVisible() && status === Image.Ready
         }
 
         Rectangle {
@@ -77,7 +75,7 @@ SkyPage {
             iconColor: guiSettings.headerTextColor
             Material.background: guiSettings.headerColor
             opacity: 0.5
-            svg: SvgOutline.arrowBack
+            svg: svgOutline.arrowBack
             accessibleName: qsTr("go back")
             onClicked: page.closed()
         }
@@ -85,7 +83,7 @@ SkyPage {
         Rectangle {
             id: avatar
             x: parent.width - width - 10
-            y: page.getAvatarY()
+            y: getAvatarY()
             width: 104
             height: width
             radius: width / 2
@@ -98,7 +96,7 @@ SkyPage {
                 author: page.author
                 showWarnedMedia: page.showWarnedMedia
                 onClicked:  {
-                    if (page.authorAvatar)
+                    if (authorAvatar)
                         root.viewFullImage([author.imageView], 0)
                 }
             }
@@ -116,11 +114,11 @@ SkyPage {
 
         PostButton {
             y: -height - 10
-            svg: (page.isUser(page.author) || page.author.hasInvalidHandle()) ? SvgOutline.chat : SvgOutline.atSign
-            overrideOnClicked: () => page.mentionPost()
+            svg: (isUser(author) || author.hasInvalidHandle()) ? svgOutline.chat : svgOutline.atSign
+            overrideOnClicked: () => mentionPost()
 
             Accessible.role: Accessible.Button
-            Accessible.name: qsTr(`post and mention ${page.author.name}`)
+            Accessible.name: qsTr(`post and mention ${author.name}`)
             Accessible.onPressAction: clicked()
         }
     }
@@ -157,19 +155,19 @@ SkyPage {
             rightPadding: 10
 
             Accessible.role: Accessible.StaticText
-            Accessible.name: qsTr(`${page.author.name}\n\n@${page.author.handle}\n\n${page.author.description}`)
+            Accessible.name: qsTr(`${author.name}\n\n@${author.handle}\n\n${author.description}`)
 
             RowLayout {
                 SvgButton {
-                    svg: SvgOutline.edit
-                    onClicked: page.editAuthor(page.author)
+                    svg: svgOutline.edit
+                    onClicked: editAuthor(author)
                     accessibleName: qsTr("edit your profile")
-                    visible: page.isUser(page.author)
+                    visible: isUser(author)
                 }
 
                 SvgButton {
                     id: moreButton
-                    svg: SvgOutline.moreVert
+                    svg: svgOutline.moreVert
                     accessibleName: qsTr("more options")
                     onClicked: moreMenu.open()
 
@@ -186,16 +184,16 @@ SkyPage {
                         }
                         AccessibleMenuItem {
                             text: qsTr("Translate")
-                            visible: page.authorDescription
+                            visible: authorDescription
                             onTriggered: root.translateText(authorDescription)
 
-                            MenuItemSvg { svg: SvgOutline.googleTranslate }
+                            MenuItemSvg { svg: svgOutline.googleTranslate }
                         }
                         AccessibleMenuItem {
                             text: qsTr("Share")
                             onTriggered: skywalker.shareAuthor(author)
 
-                            MenuItemSvg { svg: SvgOutline.share }
+                            MenuItemSvg { svg: svgOutline.share }
                         }
                         AccessibleMenuItem {
                             text: following ? qsTr("Unfollow") : qsTr("Follow")
@@ -207,100 +205,100 @@ SkyPage {
                                     graphUtils.follow(author)
                             }
 
-                            MenuItemSvg { svg: page.following ? SvgOutline.noUsers : SvgOutline.addUser }
+                            MenuItemSvg { svg: following ? svgOutline.noUsers : svgOutline.addUser }
                         }
                         AccessibleMenuItem {
                             text: qsTr("Search")
-                            onTriggered: root.viewSearchView("", page.author.handle)
+                            onTriggered: root.viewSearchView("", author.handle)
 
-                            MenuItemSvg { svg: SvgOutline.search }
+                            MenuItemSvg { svg: svgOutline.search }
                         }
                         AccessibleMenuItem {
-                            text: page.authorMuted ? qsTr("Unmute account") : qsTr("Mute account")
-                            visible: !page.isUser(page.author) && page.author.viewer.mutedByList.isNull()
+                            text: authorMuted ? qsTr("Unmute account") : qsTr("Mute account")
+                            visible: !isUser(author) && author.viewer.mutedByList.isNull()
                             onTriggered: {
-                                if (page.authorMuted)
-                                    graphUtils.unmute(page.author.did)
+                                if (authorMuted)
+                                    graphUtils.unmute(author.did)
                                 else
-                                    graphUtils.mute(page.author.did)
+                                    graphUtils.mute(author.did)
                             }
 
-                            MenuItemSvg { svg: page.authorMuted ? SvgOutline.unmute : SvgOutline.mute }
+                            MenuItemSvg { svg: authorMuted ? svgOutline.unmute : svgOutline.mute }
                         }
                         AccessibleMenuItem {
-                            text: page.blocking ? qsTr("Unblock account") : qsTr("Block account")
-                            visible: !page.isUser(page.author) && page.author.viewer.blockingByList.isNull()
+                            text: blocking ? qsTr("Unblock account") : qsTr("Block account")
+                            visible: !isUser(author) && author.viewer.blockingByList.isNull()
                             onTriggered: {
-                                if (page.blocking)
-                                    graphUtils.unblock(page.author.did, page.blocking)
+                                if (blocking)
+                                    graphUtils.unblock(author.did, blocking)
                                 else
-                                    graphUtils.block(page.author.did)
+                                    graphUtils.block(author.did)
                             }
 
-                            MenuItemSvg { svg: page.blocking ? SvgOutline.unblock : SvgOutline.block }
+                            MenuItemSvg { svg: blocking ? svgOutline.unblock : svgOutline.block }
                         }
                         AccessibleMenuItem {
-                           text: page.authorMutedReposts ? qsTr("Unmute reposts") : qsTr("Mute reposts")
-                           visible: !page.isUser(page.author)
+                           text: authorMutedReposts ? qsTr("Unmute reposts") : qsTr("Mute reposts")
+                           visible: !isUser(author)
                            onTriggered: {
-                               if (page.authorMutedReposts)
-                                   graphUtils.unmuteReposts(page.author.did)
+                               if (authorMutedReposts)
+                                   graphUtils.unmuteReposts(author.did)
                                else
-                                   graphUtils.muteReposts(page.author)
+                                   graphUtils.muteReposts(author)
                            }
 
-                           MenuItemSvg { svg: SvgOutline.repost }
+                           MenuItemSvg { svg: svgOutline.repost }
                         }
 
                         AccessibleMenuItem {
                             text: qsTr("Update lists")
-                            onTriggered: page.updateLists()
+                            onTriggered: updateLists()
 
-                            MenuItemSvg { svg: SvgOutline.list }
+                            MenuItemSvg { svg: svgOutline.list }
                         }
                         AccessibleMenuItem {
                             text: qsTr("Report account")
-                            visible: !page.isUser(page.author)
-                            onTriggered: root.reportAuthor(page.author)
+                            visible: !isUser(author)
+                            onTriggered: root.reportAuthor(author)
 
-                            MenuItemSvg { svg: SvgOutline.report }
+                            MenuItemSvg { svg: svgOutline.report }
                         }
                     }
                 }
 
                 SvgButton {
-                    svg: SvgOutline.directMessage
-                    accessibleName: qsTr(`direct message ${page.author.name}`)
-                    onClicked: skywalker.chat.startConvoForMember(page.author.did)
-                    visible: page.author.canSendDirectMessage() && !page.isUser(page.author) && !skywalker.chat.messageConvoOpen()
+                    svg: svgOutline.directMessage
+                    accessibleName: qsTr(`direct message ${author.name}`)
+                    onClicked: skywalker.chat.startConvoForMember(author.did)
+                    visible: author.canSendDirectMessage() && !isUser(author) && !skywalker.chat.messageConvoOpen()
                 }
 
                 SkyButton {
                     text: qsTr("Follow")
-                    visible: !page.following && !page.isUser(page.author) && page.contentVisible() && !page.isLabeler
-                    onClicked: graphUtils.follow(page.author)
-                    Accessible.name: qsTr(`press to follow ${page.author.name}`)
+                    visible: !following && !isUser(author) && contentVisible() && !isLabeler
+                    onClicked: graphUtils.follow(author)
+                    Accessible.name: qsTr(`press to follow ${author.name}`)
                 }
                 SkyButton {
                     flat: true
                     text: qsTr("Following")
-                    visible: page.following && !page.isUser(page.author) && page.contentVisible() && !page.isLabeler
-                    onClicked: graphUtils.unfollow(page.author.did, page.following)
-                    Accessible.name: qsTr(`press to unfollow ${page.author.name}`)
+                    visible: following && !isUser(author) && contentVisible() && !isLabeler
+                    onClicked: graphUtils.unfollow(author.did, following)
+                    Accessible.name: qsTr(`press to unfollow ${author.name}`)
                 }
 
                 SkyButton {
                     text: qsTr("Subscribe")
-                    visible: !page.isSubscribed && page.isLabeler && !page.author.isFixedLabeler()
-                    onClicked: page.contentGroupListModel.subscribed = true
-                    Accessible.name: qsTr(`press to subscribe to labeler ${page.author.name}`)
+                    visible: !isSubscribed && isLabeler && !author.isFixedLabeler()
+                    onClicked: contentGroupListModel.subscribed = true
+                    Accessible.name: qsTr(`press to subscribe to labeler ${author.name}`)
                 }
                 SkyButton {
                     flat: true
                     text: qsTr("Unsubscribe")
-                    visible: page.isSubscribed && isLabeler && !page.author.isFixedLabeler()
-                    onClicked: page.contentGroupListModel.subscribed = false
-                    Accessible.name: qsTr(`press to unsubscribe from labeler ${page.author.name}`)
+                    visible: isSubscribed && isLabeler && !author.isFixedLabeler()
+                    onClicked: contentGroupListModel.subscribed = false
+                    Accessible.name: qsTr(`press to unsubscribe from labeler ${author.name}`)
                 }
             }
 
@@ -313,7 +311,7 @@ SkyPage {
                 font.bold: true
                 font.pointSize: guiSettings.scaledFont(12/8)
                 color: guiSettings.textColor
-                plainText: page.authorName
+                plainText: authorName
 
                 Accessible.ignored: true
             }
@@ -326,15 +324,15 @@ SkyPage {
                     Layout.fillWidth: true
                     elide: Text.ElideRight
                     color: guiSettings.handleColor
-                    text: `@${page.author.handle}`
+                    text: `@${author.handle}`
                 }
                 SkyLabel {
                     text: qsTr("muted reposts")
-                    visible: page.authorMutedReposts
+                    visible: authorMutedReposts
                 }
                 SkyLabel {
                     text: qsTr("follows you")
-                    visible: page.author.viewer.followedBy
+                    visible: author.viewer.followedBy
                 }
             }
 
@@ -347,8 +345,8 @@ SkyPage {
                     id: contentLabels
                     anchors.left: parent.left
                     anchors.right: undefined
-                    contentLabels: page.author.labels
-                    contentAuthorDid: page.author.did
+                    contentLabels: author.labels
+                    contentAuthorDid: author.did
                 }
             }
 
@@ -357,19 +355,19 @@ SkyPage {
                 width: parent.width - (parent.leftPadding + parent.rightPadding)
                 spacing: 15
                 topPadding: 10
-                visible: page.contentVisible()
+                visible: contentVisible()
 
                 StatAuthors {
-                    atUri: page.author.did
-                    count: page.author.followersCount
+                    atUri: author.did
+                    count: author.followersCount
                     nameSingular: qsTr("follower")
                     namePlural: qsTr("followers")
                     authorListType: QEnums.AUTHOR_LIST_FOLLOWERS
                     authorListHeader: qsTr("Followers")
                 }
                 StatAuthors {
-                    atUri: page.author.did
-                    count: page.author.followsCount
+                    atUri: author.did
+                    count: author.followsCount
                     nameSingular: qsTr("following")
                     namePlural: qsTr("following")
                     authorListType: QEnums.AUTHOR_LIST_FOLLOWS
@@ -377,7 +375,7 @@ SkyPage {
                 }
                 Text {
                     color: guiSettings.textColor
-                    text: qsTr(`<b>${page.author.postsCount}</b> posts`)
+                    text: qsTr(`<b>${author.postsCount}</b> posts`)
 
                     Accessible.role: Accessible.StaticText
                     Accessible.name: unicodeFonts.toPlainText(text)
@@ -391,8 +389,8 @@ SkyPage {
                 wrapMode: Text.Wrap
                 textFormat: Text.RichText
                 color: guiSettings.textColor
-                text: postUtils.linkiFy(page.authorDescription, guiSettings.linkColor)
-                visible: page.contentVisible()
+                text: postUtils.linkiFy(authorDescription, guiSettings.linkColor)
+                visible: contentVisible()
 
                 onLinkActivated: (link) => root.openLink(link)
             }
@@ -403,7 +401,7 @@ SkyPage {
                 topPadding: 10
                 color: guiSettings.textColor
                 text: qsTr(`🗓 First appearance: ${firstAppearanceDate}`)
-                visible: page.contentVisible()
+                visible: contentVisible()
             }
 
             RowLayout {
@@ -417,7 +415,7 @@ SkyPage {
                     spacing: -20
 
                     Repeater {
-                        model: page.author.viewer.knownFollowers.followers
+                        model: author.viewer.knownFollowers.followers
 
                         Avatar {
                             required property int index
@@ -441,7 +439,7 @@ SkyPage {
                     textFormat: Text.RichText
                     maximumLineCount: 3
                     color: guiSettings.linkColor
-                    plainText: qsTr(`Followed by ${page.getKnownFollowersText()}`)
+                    plainText: qsTr(`Followed by ${getKnownFollowersText()}`)
 
                     MouseArea {
                         anchors.fill: parent
@@ -449,7 +447,7 @@ SkyPage {
                     }
                 }
 
-                visible: page.author.viewer.knownFollowers.count > 0
+                visible: author.viewer.knownFollowers.count > 0
 
                 function showKnownFollowers() {
                     let modelId = root.getSkywalker().createAuthorListModel(QEnums.AUTHOR_LIST_KNOWN_FOLLOWERS, author.did)
@@ -461,14 +459,14 @@ SkyPage {
                 width: parent.width - (parent.leftPadding + parent.rightPadding)
                 height: labelerContentLabels.height
                 color: "transparent"
-                visible: page.isLabeler
+                visible: isLabeler
 
                 ContentLabels {
                     id: labelerContentLabels
                     anchors.left: parent.left
                     anchors.right: undefined
-                    contentLabels: page.labeler.contentLabels
-                    contentAuthorDid: page.author.did
+                    contentLabels: labeler.contentLabels
+                    contentAuthorDid: author.did
                 }
             }
 
@@ -477,24 +475,24 @@ SkyPage {
                 width: parent.width - (parent.leftPadding + parent.rightPadding)
                 topPadding: 10
                 spacing: 10
-                visible: page.isLabeler
+                visible: isLabeler
 
                 StatIcon {
                     id: likeIcon
-                    iconColor: page.labelerLikeUri ? guiSettings.likeColor : guiSettings.statsColor
-                    svg: page.labelerLikeUri ? SvgFilled.like : SvgOutline.like
-                    onClicked: page.likeLabeler(page.labelerLikeUri, page.labeler.uri, page.labeler.cid)
-                    Accessible.name: qsTr("like") + accessibilityUtils.statSpeech(page.labelerLikeCount, qsTr("like"), qsTr("likes"))
+                    iconColor: labelerLikeUri ? guiSettings.likeColor : guiSettings.statsColor
+                    svg: labelerLikeUri ? svgFilled.like : svgOutline.like
+                    onClicked: likeLabeler(labelerLikeUri, labeler.uri, labeler.cid)
+                    Accessible.name: qsTr("like") + accessibilityUtils.statSpeech(labelerLikeCount, qsTr("like"), qsTr("likes"))
 
                     BlinkingOpacity {
                         target: likeIcon
-                        running: page.labelerLikeTransient
+                        running: labelerLikeTransient
                     }
                 }
 
                 StatAuthors {
-                    atUri: page.labeler.uri
-                    count: page.labelerLikeCount
+                    atUri: labeler.uri
+                    count: labelerLikeCount
                     nameSingular: qsTr("like")
                     namePlural: qsTr("likes")
                     authorListType: QEnums.AUTHOR_LIST_LIKES
@@ -505,12 +503,12 @@ SkyPage {
             TabBar {
                 id: feedMenuBar
                 width: parent.width - (parent.leftPadding + parent.rightPadding)
-                currentIndex: page.isLabeler ? 0 : 1
+                currentIndex: isLabeler ? 0 : 1
 
                 AccessibleTabButton {
                     text: qsTr("Labels")
-                    visible: page.isLabeler
-                    width: page.isLabeler ? implicitWidth : 0
+                    visible: isLabeler
+                    width: isLabeler ? implicitWidth : 0
                 }
                 AccessibleTabButton {
                     text: qsTr("Posts")
@@ -526,23 +524,23 @@ SkyPage {
                 }
                 AccessibleTabButton {
                     text: qsTr("Likes")
-                    visible: page.isUser(page.author)
-                    width: page.isUser(page.author) ? implicitWidth : 0
+                    visible: isUser(author)
+                    width: isUser(author) ? implicitWidth : 0
                 }
                 AccessibleTabButton {
                     text: qsTr("Feeds")
-                    visible: page.hasFeeds
-                    width: page.hasFeeds ? implicitWidth : 0
+                    visible: hasFeeds
+                    width: hasFeeds ? implicitWidth : 0
                 }
                 AccessibleTabButton {
                     text: qsTr("Starter packs")
-                    visible: page.hasStarterPacks
-                    width: page.hasStarterPacks ? implicitWidth : 0
+                    visible: hasStarterPacks
+                    width: hasStarterPacks ? implicitWidth : 0
                 }
                 AccessibleTabButton {
                     text: qsTr("Lists")
-                    visible: page.hasLists
-                    width: page.hasLists ? implicitWidth : 0
+                    visible: hasLists
+                    width: hasLists ? implicitWidth : 0
                 }
             }
 
@@ -579,7 +577,7 @@ SkyPage {
                 topMargin: 10
                 clip: true
                 spacing: 0
-                model: page.contentGroupListModel
+                model: contentGroupListModel
                 flickDeceleration: guiSettings.flickDeceleration
                 maximumFlickVelocity: guiSettings.maxFlickVelocity
                 pixelAligned: guiSettings.flickPixelAligned
@@ -631,7 +629,7 @@ SkyPage {
                 FlickableRefresher {}
 
                 EmptyListIndication {
-                    svg: SvgOutline.noLabels
+                    svg: svgOutline.noLabels
                     text: qsTr("No labels")
                     list: labelList
                 }
@@ -730,7 +728,7 @@ SkyPage {
                 }
 
                 EmptyListIndication {
-                    svg: SvgOutline.noPosts
+                    svg: svgOutline.noPosts
                     text: qsTr("No feeds")
                     list: authorFeedList
                 }
@@ -778,7 +776,7 @@ SkyPage {
                 }
 
                 EmptyListIndication {
-                    svg: SvgOutline.noLists
+                    svg: svgOutline.noLists
                     text: qsTr("No starter packs")
                     list: authorStarterPackList
                 }
@@ -833,7 +831,7 @@ SkyPage {
                 }
 
                 EmptyListIndication {
-                    svg: SvgOutline.noLists
+                    svg: svgOutline.noLists
                     text: qsTr("No lists")
                     list: authorListList
                 }
@@ -922,34 +920,34 @@ SkyPage {
         id: graphUtils
         skywalker: page.skywalker
 
-        onFollowOk: (uri) => { page.following = uri }
+        onFollowOk: (uri) => { following = uri }
         onFollowFailed: (error) => { statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR) }
-        onUnfollowOk: page.following = ""
+        onUnfollowOk: following = ""
         onUnfollowFailed: (error) => { statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR) }
 
         onBlockOk: (uri) => {
-                       page.blocking = uri
+                       blocking = uri
                        authorFeedView.clear()
                    }
 
         onBlockFailed: (error) => { statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR) }
 
         onUnblockOk: {
-            page.blocking = ""
+            blocking = ""
             authorFeedView.refresh()
         }
 
         onUnblockFailed: (error) => { statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR) }
 
         onMuteOk: {
-            page.authorMuted = true
+            authorMuted = true
             authorFeedView.clear()
         }
 
         onMuteFailed: (error) => { statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR) }
 
         onUnmuteOk: {
-            page.authorMuted = false
+            authorMuted = false
             authorFeedView.refresh()
         }
 
@@ -961,13 +959,13 @@ SkyPage {
         onUnmuteListFailed: (error) => statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
 
         onMuteRepostsOk: {
-            page.authorMutedReposts = graphUtils.areRepostsMuted(author.did)
+            authorMutedReposts = graphUtils.areRepostsMuted(author.did)
             authorFeedView.refresh()
         }
         onMuteRepostsFailed: (error) => statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
 
         onUnmuteRepostsOk: {
-            page.authorMutedReposts = graphUtils.areRepostsMuted(author.did)
+            authorMutedReposts = graphUtils.areRepostsMuted(author.did)
             authorFeedView.refresh()
         }
         onUnmuteRepostsFailed: (error) => statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
@@ -977,33 +975,33 @@ SkyPage {
         id: profileUtils
         skywalker: page.skywalker
 
-        onGetLabelerViewDetailedOk: (view) => page.setLabeler(view)
+        onGetLabelerViewDetailedOk: (view) => setLabeler(view)
         onGetLabelerViewDetailedFailed: (error) => statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
 
         onLikeLabelerOk: (likeUri) => {
-            page.labelerLikeUri = likeUri
-            ++page.labelerLikeCount
-            page.labelerLikeTransient = false
+            labelerLikeUri = likeUri
+            ++labelerLikeCount
+            labelerLikeTransient = false
         }
 
         onLikeLabelerFailed: (error) => {
-            page.labelerLikeTransient = false
+            labelerLikeTransient = false
             statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
         }
 
         onUndoLikeLabelerOk: {
-            page.labelerLikeUri = ""
-            --page.labelerLikeCount
-            page.labelerLikeTransient = false
+            labelerLikeUri = ""
+            --labelerLikeCount
+            labelerLikeTransient = false
         }
 
         onUndoLikeLabelerFailed: (error) => {
-            page.labelerLikeTransient = false
+            labelerLikeTransient = false
             statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
         }
 
         onFirstAppearanceOk: (did, appearance) => {
-            page.firstAppearanceDate = appearance.toLocaleDateString(Qt.locale(), Locale.ShortFormat)
+            firstAppearanceDate = appearance.toLocaleDateString(Qt.locale(), Locale.ShortFormat)
         }
     }
 
@@ -1162,14 +1160,14 @@ SkyPage {
 
     function getEmptyListIndicationSvg() {
         if (author.viewer.blockedBy || blocking) {
-            return SvgOutline.block
+            return svgOutline.block
         } else if (authorMuted) {
-            return SvgOutline.mute
+            return svgOutline.mute
         } else if (!contentVisible()) {
-            return SvgOutline.hideVisibility
+            return svgOutline.hideVisibility
         }
 
-        return SvgOutline.noPosts
+        return svgOutline.noPosts
     }
 
     function getEmptyListIndicationText() {

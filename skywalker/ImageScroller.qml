@@ -63,7 +63,7 @@ ScrollView {
                     x: parent.width - width
                     width: 34
                     height: width
-                    svg: SvgOutline.close
+                    svg: svgOutline.close
                     accessibleName: qsTr(`remove picture ${(index + 1)}`)
                     onClicked: imageScroller.removeImage(index)
                 }

@@ -20,12 +20,12 @@ Row {
     Accessible.name: warnText.visible ? qsTr(`Hidden image content: ${contentWarning}. Press to show pictures`) : qsTr(`Hidden image content: ${contentWarning}`)
     Accessible.onPressAction: if (warnText.visible) warnText.linkActivated("")
 
-    SkySvg {
+    SvgImage {
         id: imgIcon
         width: 30
         height: width
         color: Material.color(Material.Grey)
-        svg: SvgOutline.hideVisibility
+        svg: svgOutline.hideVisibility
         visible: !imageVisible()
     }
 

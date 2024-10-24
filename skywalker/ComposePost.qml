@@ -95,7 +95,7 @@ SkyPage {
             id: cancelButton
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-            svg: SvgOutline.cancel
+            svg: svgOutline.cancel
             accessibleName: qsTr("cancel posting")
             onClicked: page.cancel()
         }
@@ -144,7 +144,7 @@ SkyPage {
             id: moreOptions
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            svg: SvgOutline.moreVert
+            svg: svgOutline.moreVert
             accessibleName: qsTr("post options")
             onClicked: moreMenu.open()
 
@@ -585,7 +585,7 @@ SkyPage {
                         z: 10
                         width: 34
                         height: width
-                        svg: SvgOutline.remove
+                        svg: svgOutline.remove
                         accessibleName: qsTr("remove post")
                         visible: !postItem.hasContent() && threadPosts.count > 1 && (index > 0 || !replyToPostUri)
 
@@ -685,7 +685,7 @@ SkyPage {
                             x: parent.width - width
                             width: 34
                             height: width
-                            svg: SvgOutline.close
+                            svg: svgOutline.close
                             accessibleName: qsTr("remove GIF image")
                             onClicked: gifAttachment.hide()
                         }
@@ -737,7 +737,7 @@ SkyPage {
                             x: parent.width - width
                             width: 34
                             height: width
-                            svg: SvgOutline.close
+                            svg: svgOutline.close
                             accessibleName: qsTr("remove link card")
                             onClicked: linkCard.hide()
                         }
@@ -1052,14 +1052,14 @@ SkyPage {
                 return qsTr(`${speech}, press to change reply restrictions`)
             }
 
-            SkySvg {
+            SvgImage {
                 id: restrictionIcon
                 x: 10
                 y: height + 3
                 width: 20
                 height: 20
                 color: guiSettings.linkColor
-                svg: restrictReply ? SvgOutline.replyRestrictions : SvgOutline.noReplyRestrictions
+                svg: restrictReply ? svgOutline.replyRestrictions : svgOutline.noReplyRestrictions
 
                 Accessible.ignored: true
             }
@@ -1142,7 +1142,7 @@ SkyPage {
             x: 10
             y: height + 5 + restrictionRow.height + footerSeparator.height
             accessibleName: qsTr("add picture")
-            svg: SvgOutline.addImage
+            svg: svgOutline.addImage
             enabled: page.canAddImage()
 
             onClicked: {
@@ -1215,7 +1215,7 @@ SkyPage {
             anchors.leftMargin: 8
             y: height + 5 + restrictionRow.height + footerSeparator.height
             accessibleName: qsTr("add content warning")
-            svg: hasContentWarning() ? SvgOutline.hideVisibility : SvgOutline.visibility
+            svg: hasContentWarning() ? svgOutline.hideVisibility : svgOutline.visibility
             visible: hasImageContent()
             onClicked: page.addContentWarning()
         }
@@ -1227,7 +1227,7 @@ SkyPage {
             height: 34
             anchors.rightMargin: 10
             anchors.right: parent.right
-            svg: SvgOutline.add
+            svg: svgOutline.add
             accessibleName: qsTr("add post")
             enabled: hasFullContent() && threadPosts.count < maxThreadPosts
             focusPolicy: Qt.NoFocus

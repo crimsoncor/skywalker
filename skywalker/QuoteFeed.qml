@@ -53,7 +53,7 @@ Column {
         SvgButton {
             Layout.preferredWidth: 34
             Layout.preferredHeight: 34
-            svg: SvgOutline.close
+            svg: svgOutline.close
             accessibleName: qsTr("remove quoted feed")
             focusPolicy: Qt.NoFocus
             visible: showCloseButton

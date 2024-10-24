@@ -78,7 +78,6 @@ class SvgOutline : public QObject
     Q_PROPERTY(SvgImage user MEMBER sPerson CONSTANT FINAL)
     Q_PROPERTY(SvgImage visibility MEMBER sVisibility CONSTANT FINAL)
     Q_PROPERTY(SvgImage warning MEMBER sWarning CONSTANT FINAL)
-    QML_SINGLETON
     QML_ELEMENT
 
 public:

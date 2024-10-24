@@ -48,14 +48,14 @@ Rectangle {
             Accessible.name: getHomeSpeech()
             Accessible.onPressAction: homeClicked()
 
-            SkySvg {
+            SvgImage {
                 id: homeButton
                 y: height + 5
                 width: height
                 height: parent.height - 10
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: guiSettings.textColor
-                svg: homeActive ? SvgFilled.home : SvgOutline.home
+                svg: homeActive ? svgFilled.home : svgOutline.home
 
                 BadgeCounter {
                     counter: timeline.unreadPosts
@@ -73,13 +73,13 @@ Rectangle {
                     border.width: 2
                     visible: showHomeFeedBadge
 
-                    SkySvg {
+                    SvgImage {
                         x: 4
                         y: height + 2
                         width: 14
                         height: width
                         color: guiSettings.backgroundColor
-                        svg: SvgOutline.feed
+                        svg: svgOutline.feed
                     }
                 }
             }
@@ -99,14 +99,14 @@ Rectangle {
             Accessible.name: qsTr("search")
             Accessible.onPressAction: searchClicked()
 
-            SkySvg {
+            SvgImage {
                 id: searchButton
                 y: height + 5
                 width: height
                 height: parent.height - 10
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: guiSettings.textColor
-                svg: searchActive ? SvgFilled.search : SvgOutline.search
+                svg: searchActive ? svgFilled.search : svgOutline.search
             }
 
             MouseArea {
@@ -124,14 +124,14 @@ Rectangle {
             Accessible.name: qsTr("feeds")
             Accessible.onPressAction: feedsClicked()
 
-            SkySvg {
+            SvgImage {
                 id: feedsButton
                 y: height + 5
                 width: height
                 height: parent.height - 10
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: guiSettings.textColor
-                svg: feedsActive ? SvgFilled.feed : SvgOutline.feed
+                svg: feedsActive ? svgFilled.feed : svgOutline.feed
             }
 
             MouseArea {
@@ -149,14 +149,14 @@ Rectangle {
             Accessible.name: skywalker.chat.unreadCount === 0 ? qsTr("direct messages") : qsTr(`${skywalker.chat.unreadCount} new direct messages`)
             Accessible.onPressAction: messagesClicked()
 
-            SkySvg {
+            SvgImage {
                 id: messagesButton
                 y: height + 5
                 width: height
                 height: parent.height - 10
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: guiSettings.textColor
-                svg: messagesActive ? SvgFilled.directMessage : SvgOutline.directMessage
+                svg: messagesActive ? svgFilled.directMessage : svgOutline.directMessage
                 Accessible.ignored: true
 
                 BadgeCounter {
@@ -179,14 +179,14 @@ Rectangle {
             Accessible.name: root.getSkywalker().unreadNotificationCount === 0 ? qsTr("notifications") : qsTr(`${skywalker.unreadNotificationCount} new notifications`)
             Accessible.onPressAction: notificationsClicked()
 
-            SkySvg {
+            SvgImage {
                 id: notificationsButton
                 y: height + 5
                 width: height
                 height: parent.height - 10
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: guiSettings.textColor
-                svg: notificationsActive ? SvgFilled.notifications : SvgOutline.notifications
+                svg: notificationsActive ? svgFilled.notifications : svgOutline.notifications
                 Accessible.ignored: true
 
                 BadgeCounter {
@@ -217,12 +217,12 @@ Rectangle {
 
         function getSvg() {
             if (messagesActive)
-                return SvgOutline.add
+                return svgOutline.add
 
             if (isHashtagSearch())
-                return SvgOutline.hashtag
+                return svgOutline.hashtag
 
-            return SvgOutline.chat
+            return svgOutline.chat
         }
     }
 

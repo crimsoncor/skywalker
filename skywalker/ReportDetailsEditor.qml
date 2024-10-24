@@ -15,7 +15,7 @@ SkyPage {
 
     header: SimpleButtonHeader {
         title: qsTr("Report details")
-        buttonSvg: SvgOutline.check
+        buttonSvg: svgOutline.check
         enabled: !detailsText.maxGraphemeLengthExceeded()
         onButtonClicked: detailsChanged(page.text)
     }

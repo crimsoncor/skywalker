@@ -59,7 +59,7 @@ ListView {
 
             SvgButton {
                 id: copyButton
-                svg: SvgOutline.copy
+                svg: svgOutline.copy
                 accessibleName: qsTr("copy invite code")
                 iconColor: guiSettings.textColor
                 Material.background: "transparent"

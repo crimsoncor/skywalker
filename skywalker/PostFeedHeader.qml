@@ -6,7 +6,7 @@ import skywalker
 Rectangle {
     required property var skywalker
     required property string feedName
-    property svgimage defaultSvg: SvgFilled.feed
+    property svgimage defaultSvg: svgFilled.feed
     property string feedAvatar
     property bool showAsHome: false
     property bool isHomeFeed: false
@@ -35,7 +35,7 @@ Rectangle {
             id: backButton
             iconColor: guiSettings.headerTextColor
             Material.background: "transparent"
-            svg: SvgOutline.arrowBack
+            svg: svgOutline.arrowBack
             accessibleName: qsTr("go back")
             visible: !showAsHome
 
@@ -94,7 +94,7 @@ Rectangle {
         }
 
         SvgButton {
-            svg: SvgOutline.language
+            svg: svgOutline.language
             iconColor: guiSettings.headerTextColor
             Material.background: "transparent"
             accessibleName: qsTr("language filter active")

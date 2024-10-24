@@ -22,7 +22,7 @@ VideoThumbnail {
         x: parent.width - width
         width: 34
         height: width
-        svg: SvgOutline.close
+        svg: svgOutline.close
         accessibleName: qsTr("remove video")
         onClicked: videoAttachement.remove()
     }
@@ -42,7 +42,7 @@ VideoThumbnail {
         y: parent.height - height
         width: 34
         height: 34
-        svg: SvgOutline.edit
+        svg: svgOutline.edit
         accessibleName: qsTr("edit video")
         onClicked: edit()
     }

@@ -23,7 +23,7 @@ Video {
 
     onVideoStartMsChanged: videoThumbnail.position = videoStartMs
 
-    SkySvg {
+    SvgImage {
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2 + height
         width: 50
@@ -31,7 +31,7 @@ Video {
         color: "white"
         outlineColor: "black"
         opacity: 0.6
-        svg: SvgFilled.film
+        svg: svgFilled.film
     }
 
     // Play video for 200ms to get a still frame showing

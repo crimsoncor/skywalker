@@ -138,7 +138,7 @@ SkyPage {
         Column {
             SvgButton {
                 id: moreButton
-                svg: SvgOutline.moreVert
+                svg: svgOutline.moreVert
                 accessibleName: qsTr("more options")
 
                 onClicked: {
@@ -159,7 +159,7 @@ SkyPage {
 
             SvgButton {
                 id: addUser
-                svg: SvgOutline.addUser
+                svg: svgOutline.addUser
                 accessibleName: qsTr("add user to list")
                 visible: isOwnList()
                 onClicked: page.addUser()
@@ -212,7 +212,7 @@ SkyPage {
             text: qsTr("Edit")
             onTriggered: editList()
 
-            MenuItemSvg { svg: SvgOutline.edit }
+            MenuItemSvg { svg: svgOutline.edit }
         }
 
         AccessibleMenuItem {
@@ -229,7 +229,7 @@ SkyPage {
             }
 
             MenuItemSvg {
-                svg: isPinnedList ? SvgFilled.star : SvgOutline.star
+                svg: isPinnedList ? svgFilled.star : svgOutline.star
                 color: isPinnedList ? guiSettings.favoriteColor : guiSettings.textColor
             }
         }
@@ -239,19 +239,19 @@ SkyPage {
             enabled: list.description
             onTriggered: root.translateText(list.description)
 
-            MenuItemSvg { svg: SvgOutline.googleTranslate }
+            MenuItemSvg { svg: svgOutline.googleTranslate }
         }
         AccessibleMenuItem {
             text: qsTr("Share")
             onTriggered: skywalker.shareList(list)
 
-            MenuItemSvg { svg: SvgOutline.share }
+            MenuItemSvg { svg: svgOutline.share }
         }
         AccessibleMenuItem {
             text: qsTr("Report list")
             onTriggered: root.reportList(list)
 
-            MenuItemSvg { svg: SvgOutline.report }
+            MenuItemSvg { svg: svgOutline.report }
         }
     }
 
@@ -276,7 +276,7 @@ SkyPage {
                 skywalker.saveFavoriteFeeds()
             }
 
-            MenuItemSvg { svg: isSavedList ? SvgOutline.remove : SvgOutline.add }
+            MenuItemSvg { svg: isSavedList ? svgOutline.remove : svgOutline.add }
         }
         AccessibleMenuItem {
             text: isPinnedList ? qsTr("Remove favorite") : qsTr("Add favorite")
@@ -288,7 +288,7 @@ SkyPage {
             }
 
             MenuItemSvg {
-                svg: isPinnedList ? SvgFilled.star : SvgOutline.star
+                svg: isPinnedList ? svgFilled.star : svgOutline.star
                 color: isPinnedList ? guiSettings.favoriteColor : guiSettings.textColor
             }
         }
@@ -298,19 +298,19 @@ SkyPage {
             enabled: list.description
             onTriggered: root.translateText(list.description)
 
-            MenuItemSvg { svg: SvgOutline.googleTranslate }
+            MenuItemSvg { svg: svgOutline.googleTranslate }
         }
         AccessibleMenuItem {
             text: qsTr("Share")
             onTriggered: skywalker.shareList(list)
 
-            MenuItemSvg { svg: SvgOutline.share }
+            MenuItemSvg { svg: svgOutline.share }
         }
         AccessibleMenuItem {
             text: qsTr("Report list")
             onTriggered: root.reportList(list)
 
-            MenuItemSvg { svg: SvgOutline.report }
+            MenuItemSvg { svg: svgOutline.report }
         }
     }
 
@@ -327,7 +327,7 @@ SkyPage {
             onTriggered: editList()
             enabled: isOwnList()
 
-            MenuItemSvg { svg: SvgOutline.edit }
+            MenuItemSvg { svg: svgOutline.edit }
         }
 
         AccessibleMenuItem {
@@ -335,7 +335,7 @@ SkyPage {
             onTriggered: listMuted ? graphUtils.unmuteList(list.uri) : graphUtils.muteList(list.uri)
             enabled: !listBlockedUri || listMuted
 
-            MenuItemSvg { svg: listMuted ? SvgOutline.unmute : SvgOutline.mute }
+            MenuItemSvg { svg: listMuted ? svgOutline.unmute : svgOutline.mute }
         }
 
         AccessibleMenuItem {
@@ -343,7 +343,7 @@ SkyPage {
             onTriggered: listBlockedUri ? graphUtils.unblockList(list.uri, listBlockedUri) : graphUtils.blockList(list.uri)
             enabled: !listMuted || listBlockedUri
 
-            MenuItemSvg { svg: listBlockedUri ? SvgOutline.unblock : SvgOutline.block }
+            MenuItemSvg { svg: listBlockedUri ? svgOutline.unblock : svgOutline.block }
         }
 
         AccessibleMenuItem {
@@ -351,19 +351,19 @@ SkyPage {
             enabled: list.description
             onTriggered: root.translateText(list.description)
 
-            MenuItemSvg { svg: SvgOutline.googleTranslate }
+            MenuItemSvg { svg: svgOutline.googleTranslate }
         }
         AccessibleMenuItem {
             text: qsTr("Share")
             onTriggered: skywalker.shareList(list)
 
-            MenuItemSvg { svg: SvgOutline.share }
+            MenuItemSvg { svg: svgOutline.share }
         }
         AccessibleMenuItem {
             text: qsTr("Report list")
             onTriggered: root.reportList(list)
 
-            MenuItemSvg { svg: SvgOutline.report }
+            MenuItemSvg { svg: svgOutline.report }
         }
     }
 

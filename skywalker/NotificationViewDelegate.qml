@@ -126,41 +126,41 @@ Rectangle {
                 Accessible.name: qsTr(`show profile of ${notificationAuthor.name}`)
                 Accessible.onPressAction: clicked()
             }
-            SkySvg {
+            SvgImage {
                 x: parent.x + 14
                 y: height + 5
                 width: parent.width - 19
                 height: width
                 color: guiSettings.likeColor
-                svg: SvgFilled.like
+                svg: svgFilled.like
                 visible: notificationReason === QEnums.NOTIFICATION_REASON_LIKE
             }
-            SkySvg {
+            SvgImage {
                 x: parent.x + 14
                 y: height + 5
                 width: parent.width - 19
                 height: width
                 color: guiSettings.textColor
-                svg: SvgOutline.repost
+                svg: svgOutline.repost
                 visible: notificationReason === QEnums.NOTIFICATION_REASON_REPOST
             }
-            SkySvg {
+            SvgImage {
                 x: parent.x + 14
                 y: height + 5
                 width: parent.width - 19
                 height: width
                 color: guiSettings.textColor
-                svg: SvgOutline.inviteCode
+                svg: svgOutline.inviteCode
                 visible: notificationReason === QEnums.NOTIFICATION_REASON_INVITE_CODE_USED
             }
-            SkySvg {
+            SvgImage {
                 x: parent.x + 14
                 y: height + 5
                 width: parent.width - 19
                 height: width
                 color: guiSettings.moderatorIconColor
                 outlineColor: guiSettings.textColor
-                svg: SvgFilled.moderator
+                svg: svgFilled.moderator
                 visible: notificationReason === QEnums.NOTIFICATION_REASON_NEW_LABELS
             }
             Rectangle {
@@ -172,13 +172,13 @@ Rectangle {
                 color: guiSettings.avatarDefaultColor
                 visible: notificationReason === QEnums.NOTIFICATION_REASON_FOLLOW
 
-                SkySvg {
+                SvgImage {
                     x: 5
                     y: height + 5
                     width: parent.width - 10
                     height: width
                     color: "white"
-                    svg: SvgFilled.newFollower
+                    svg: svgFilled.newFollower
                 }
             }
         }

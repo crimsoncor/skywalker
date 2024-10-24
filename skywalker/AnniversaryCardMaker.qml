@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Material
 import QtQuick.Layouts
 import skywalker
 
@@ -27,9 +26,9 @@ SkyPage {
             anchors.rightMargin: 10
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            svg: SvgOutline.check
+            svg: svgOutline.check
             accessibleName: qsTr("add card")
-            onClicked: page.addCard(anniversaryCard.imageSource, page.years)
+            onClicked: addCard(anniversaryCard.imageSource, page.years)
         }
     }
 
@@ -55,12 +54,12 @@ SkyPage {
             RoundButton {
                 id: backgroundButton
                 Material.background: anniversaryCard.backgroundColor
-                onClicked: page.selectColor(anniversaryCard.backgroundColor, (color) => anniversaryCard.backgroundColor = color)
+                onClicked: selectColor(anniversaryCard.backgroundColor, (color) => anniversaryCard.backgroundColor = color)
             }
 
             AccessibleText {
                 Layout.fillWidth: true
-                Layout.preferredHeight: backgroundButton.height
+                height: backgroundButton.height
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
                 text: qsTr("Background")
@@ -74,12 +73,12 @@ SkyPage {
             RoundButton {
                 id: logoButton
                 Material.background: anniversaryCard.logoColor
-                onClicked: page.selectColor(anniversaryCard.logoColor, (color) => anniversaryCard.logoColor = color)
+                onClicked: selectColor(anniversaryCard.logoColor, (color) => anniversaryCard.logoColor = color)
             }
 
             AccessibleText {
                 Layout.fillWidth: true
-                Layout.preferredHeight: logoButton.height
+                height: logoButton.height
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
                 text: qsTr("Logo")
@@ -93,12 +92,12 @@ SkyPage {
             RoundButton {
                 id: ageButton
                 Material.background: anniversaryCard.ageColor
-                onClicked: page.selectColor(anniversaryCard.ageColor, (color) => anniversaryCard.ageColor = color)
+                onClicked: selectColor(anniversaryCard.ageColor, (color) => anniversaryCard.ageColor = color)
             }
 
             AccessibleText {
                 Layout.fillWidth: true
-                Layout.preferredHeight: ageButton.height
+                height: ageButton.height
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
                 text: qsTr("Number")

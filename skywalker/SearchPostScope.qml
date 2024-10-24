@@ -128,7 +128,7 @@ Dialog {
                 height: width
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                svg: SvgOutline.cancel
+                svg: svgOutline.cancel
                 iconColor: guiSettings.textColor
                 Material.background: "transparent"
                 accessibleName: qsTr("clear since date")
@@ -161,7 +161,7 @@ Dialog {
                 height: width
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                svg: SvgOutline.cancel
+                svg: svgOutline.cancel
                 iconColor: guiSettings.textColor
                 Material.background: "transparent"
                 accessibleName: qsTr("clear until date")

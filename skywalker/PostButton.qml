@@ -11,7 +11,7 @@ SvgButton {
     height: width
     opacity: 0.6
     imageMargin: 20
-    svg: SvgOutline.chat
+    svg: svgOutline.chat
     accessibleName: qsTr("create post")
 
     onXChanged: {

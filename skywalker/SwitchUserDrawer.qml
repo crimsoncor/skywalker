@@ -34,7 +34,7 @@ Drawer {
                 id: closeButton
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                svg: SvgOutline.close
+                svg: svgOutline.close
                 accessibleName: qsTr("cancel switch user")
                 onClicked: drawer.close()
             }

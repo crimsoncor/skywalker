@@ -79,7 +79,7 @@ ListView {
                 Layout.rowSpan: 2
                 iconColor: guiSettings.textColor
                 Material.background: "transparent"
-                svg: SvgOutline.delete
+                svg: svgOutline.delete
                 accessibleName: qsTr(`delete ${author.name}`)
                 onClicked: deleteClicked(author)
                 visible: allowDelete && author.did

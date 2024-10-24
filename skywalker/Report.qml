@@ -35,7 +35,7 @@ SkyPage {
         SvgButton {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-            svg: SvgOutline.cancel
+            svg: svgOutline.cancel
             accessibleName: qsTr("cancel")
             onClicked: page.closed()
         }

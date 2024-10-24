@@ -6,7 +6,7 @@ import skywalker
 Item {
     property basicprofile author
     property int radius: width / 2
-    property svgimage unknownSvg: SvgFilled.unknownAvatar
+    property svgimage unknownSvg: svgFilled.unknownAvatar
     readonly property int contentVisibility: root.getSkywalker().getContentVisibility(author.labels)
     property bool showWarnedMedia: false
     readonly property bool showThumb: width < 90 // from bsky client code
@@ -41,11 +41,11 @@ Item {
         color: guiSettings.avatarDefaultColor
         visible: !avatarFrame.visible
 
-        SkySvg {
+        SvgImage {
             width: parent.width
             height: parent.height
             color: "white"
-            svg: author.associated.isLabeler ? SvgFilled.moderator : avatarItem.unknownSvg
+            svg: author.associated.isLabeler ? svgFilled.moderator : avatarItem.unknownSvg
         }
     }
     MouseArea {

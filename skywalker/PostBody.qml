@@ -66,7 +66,7 @@ Column {
             width: parent.width
             spacing: 10
 
-            SkySvg {
+            SvgImage {
                 id: imgIcon
                 width: 30
                 height: width
@@ -75,16 +75,16 @@ Column {
 
                 function getIcon() {
                     if (!mutePost)
-                        return SvgOutline.hideVisibility
+                        return svgOutline.hideVisibility
 
                     switch (postMuted) {
                     case QEnums.MUTED_POST_AUTHOR:
-                        return SvgOutline.mute
+                        return svgOutline.mute
                     case QEnums.MUTED_POST_WORDS:
-                        return SvgOutline.mutedWords
+                        return svgOutline.mutedWords
                     }
 
-                    return SvgOutline.hideVisibility
+                    return svgOutline.hideVisibility
                 }
             }
 

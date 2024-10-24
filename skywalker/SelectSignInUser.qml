@@ -30,7 +30,7 @@ SkyPage {
                 id: backButton
                 iconColor: guiSettings.headerTextColor
                 Material.background: "transparent"
-                svg: SvgOutline.arrowBack
+                svg: svgOutline.arrowBack
                 accessibleName: qsTr("go back")
                 onClicked: page.canceled()
             }

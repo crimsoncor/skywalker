@@ -19,7 +19,7 @@ SkyListView {
     header: PostFeedHeader {
         skywalker: postListFeedView.skywalker
         feedName: postListFeedView.model.feedName
-        defaultSvg: SvgFilled.list
+        defaultSvg: svgFilled.list
         feedAvatar: postListFeedView.model.getListView().avatarThumb
         showAsHome: postListFeedView.showAsHome
         showLanguageFilter: postListFeedView.model.languageFilterConfigured
@@ -62,7 +62,7 @@ SkyListView {
 
     EmptyListIndication {
         y: parent.headerItem ? parent.headerItem.height : 0
-        svg: SvgOutline.noPosts
+        svg: svgOutline.noPosts
         text: qsTr("Feed is empty")
         list: postListFeedView
     }

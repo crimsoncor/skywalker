@@ -20,7 +20,7 @@ SkyListView {
             id: moreOptions
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            svg: SvgOutline.moreVert
+            svg: svgOutline.moreVert
             accessibleName: qsTr("notification options")
             onClicked: moreMenu.open()
 
@@ -75,7 +75,7 @@ SkyListView {
 
     EmptyListIndication {
         y: parent.headerItem ? parent.headerItem.height : 0
-        svg: SvgOutline.noPosts
+        svg: svgOutline.noPosts
         text: skywalker.notificationListModel.priority ? qsTr("No priority notifications") : qsTr("No notifications")
         list: notificationListView
     }

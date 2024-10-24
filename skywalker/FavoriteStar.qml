@@ -1,12 +1,12 @@
 import QtQuick
 import skywalker
 
-SkySvg {
+SvgImage {
     x: parent.width - width / 2
     y: height - height / 2
     height: width
     color: guiSettings.favoriteColor
-    svg: SvgFilled.star
+    svg: svgFilled.star
 
     GuiSettings {
         id: guiSettings

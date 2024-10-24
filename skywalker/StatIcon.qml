@@ -18,7 +18,7 @@ Rectangle {
     Accessible.role: Accessible.Button
     Accessible.onPressAction: if (enabled) clicked()
 
-    SkySvg {
+    SvgImage {
         id: statIcon
         anchors.left: parent.left
         width: statText.height

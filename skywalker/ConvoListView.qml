@@ -49,7 +49,7 @@ SkyListView {
 
     EmptyListIndication {
         y: parent.headerItem ? parent.headerItem.height : 0
-        svg: SvgOutline.noDirectMessages
+        svg: svgOutline.noDirectMessages
         text: qsTr("None")
         list: conversationsView
     }

@@ -37,7 +37,7 @@ SkyPage {
     SkyTextInput {
         id: searchInput
         width: parent.width
-        svgIcon: SvgOutline.user
+        svgIcon: svgOutline.user
         placeholderText: qsTr("Search user")
         inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
 

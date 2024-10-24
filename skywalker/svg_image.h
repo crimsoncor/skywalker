@@ -31,3 +31,5 @@ private:
 };
 
 }
+
+Q_DECLARE_METATYPE(::Skywalker::SvgImage)

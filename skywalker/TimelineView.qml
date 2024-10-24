@@ -78,7 +78,7 @@ SkyListView {
 
     EmptyListIndication {
         y: parent.headerItem ? parent.headerItem.height : 0
-        svg: SvgOutline.noPosts
+        svg: svgOutline.noPosts
         text: qsTr("No posts, follow more people")
         list: timelineView
     }

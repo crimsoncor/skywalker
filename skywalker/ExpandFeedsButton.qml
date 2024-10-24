@@ -9,7 +9,7 @@ SvgButton {
 
     iconColor: guiSettings.headerTextColor
     Material.background: "transparent"
-    svg: SvgOutline.expandMore
+    svg: svgOutline.expandMore
     accessibleName: qsTr("select other feed")
     onClicked: feedsMenu.open()
 
@@ -35,7 +35,7 @@ SvgButton {
                 anchors.right: parent.right
                 width: height
                 height: parent.height - 10
-                unknownSvg: SvgFilled.home
+                unknownSvg: svgFilled.home
                 onClicked: parent.triggered()
             }
 
@@ -71,7 +71,7 @@ SvgButton {
                     width: height
                     height: parent.height - 10
                     avatarUrl: modelData.avatarThumb
-                    unknownSvg: modelData.isGeneratorView ? SvgFilled.feed : SvgFilled.list
+                    unknownSvg: modelData.isGeneratorView ? svgFilled.feed : svgFilled.list
                     onClicked: parent.triggered()
                 }
 

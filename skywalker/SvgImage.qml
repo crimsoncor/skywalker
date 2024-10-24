@@ -11,9 +11,9 @@ Shape {
     y: height
 
     ShapePath {
-        scale: Qt.size(shape.height / shape.svg.width, shape.height / shape.svg.height)
+        scale: Qt.size(shape.height / svg.width, shape.height / svg.height)
         strokeColor: shape.outlineColor
         fillColor: shape.color
-        PathSvg { path: shape.svg.path }
+        PathSvg { path: svg.path }
     }
 }

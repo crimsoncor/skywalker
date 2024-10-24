@@ -4,13 +4,13 @@ import skywalker
 
 Row {
     required property string text
-    property svgimage svg: SvgOutline.reply
+    property svgimage svg: svgOutline.reply
 
     id: row
     width: parent.width
     spacing: 5
 
-    SkySvg {
+    SvgImage {
         id: replyImg
         width: parent.visible ? replyToText.height : 0
         height: width

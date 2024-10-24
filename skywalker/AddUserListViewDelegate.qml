@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import skywalker
 
@@ -25,7 +26,6 @@ Rectangle {
         width: parent.width
         rowSpacing: 0
 
-        // TODO: width/height
         Rectangle {
             Layout.columnSpan: 3
             Layout.fillWidth: true
@@ -40,7 +40,7 @@ Rectangle {
             y: 5
             width: 44
             Layout.alignment: Qt.AlignTop
-            avatarUrl: view.list.avatarThumb
+            avatarUrl: list.avatarThumb
         }
 
         Column {
@@ -55,7 +55,7 @@ Rectangle {
                 elide: Text.ElideRight
                 font.bold: true
                 color: guiSettings.textColor
-                plainText: view.list.name
+                plainText: list.name
 
                 Accessible.ignored: true
             }
@@ -66,7 +66,7 @@ Rectangle {
                 elide: Text.ElideRight
                 font.pointSize: guiSettings.scaledFont(7/8)
                 color: guiSettings.handleColor
-                text: guiSettings.listTypeName(view.list.purpose)
+                text: guiSettings.listTypeName(list.purpose)
 
                 Accessible.ignored: true
             }
@@ -78,7 +78,7 @@ Rectangle {
                 elide: Text.ElideRight
                 font.pointSize: guiSettings.scaledFont(7/8)
                 color: guiSettings.handleColor
-                text: `@${view.listCreator.handle}`
+                text: `@${listCreator.handle}`
 
                 Accessible.ignored: true
             }
@@ -86,10 +86,10 @@ Rectangle {
 
         SvgButton {
             Layout.alignment: Qt.AlignTop
-            svg: view.memberCheck === QEnums.TRIPLE_BOOL_YES ? SvgOutline.remove : SvgOutline.add
-            accessibleName: view.memberCheck === QEnums.TRIPLE_BOOL_YES ? qsTr("add") : qsTr("remove")
-            visible: view.memberCheck !== QEnums.TRIPLE_BOOL_UNKNOWN
-            onClicked: view.updateList()
+            svg: memberCheck === QEnums.TRIPLE_BOOL_YES ? svgOutline.remove : svgOutline.add
+            accessibleName: memberCheck === QEnums.TRIPLE_BOOL_YES ? qsTr("add") : qsTr("remove")
+            visible: memberCheck !== QEnums.TRIPLE_BOOL_UNKNOWN
+            onClicked: updateList()
         }
 
         Rectangle {

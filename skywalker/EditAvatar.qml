@@ -30,7 +30,7 @@ SkyPage {
         SvgButton {
             anchors.right: parent.right
             anchors.top: parent.top
-            svg: SvgOutline.check
+            svg: svgOutline.check
             accessibleName: qsTr("save avatar")
             onClicked: selected(img.getSelectRect())
         }

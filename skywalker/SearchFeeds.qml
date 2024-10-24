@@ -91,7 +91,7 @@ SkyPage {
             }
 
             EmptyListIndication {
-                svg: SvgOutline.noPosts
+                svg: svgOutline.noPosts
                 text: qsTr("No results")
                 list: feedListView
             }
@@ -125,7 +125,7 @@ SkyPage {
             FlickableRefresher {}
 
             EmptyListIndication {
-                svg: SvgOutline.noPosts
+                svg: svgOutline.noPosts
                 text: qsTr("No saved feeds")
                 list: savedFeedsView
             }

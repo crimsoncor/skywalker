@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Material
+import QtQuick.Layouts
 import skywalker
 
 Dialog {
@@ -16,11 +16,13 @@ Dialog {
     standardButtons: Dialog.Ok | Dialog.Cancel
     Material.background: guiSettings.backgroundColor
 
+    Accessible.role: Accessible.Dialog
+
     SkyTextInput {
         id: textInput
         width: parent.width
-        svgIcon: SvgOutline.mutedWords
-        initialText: page.editWord
+        svgIcon: svgOutline.mutedWords
+        initialText: editWord
         placeholderText: qsTr("Word, phrase, or hashtag to mute")
         enabled: true
 

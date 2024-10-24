@@ -43,7 +43,7 @@ SkyPage {
         iconColor: "white"
         Material.background: "black"
         opacity: 0.7
-        svg: SvgOutline.arrowBack
+        svg: svgOutline.arrowBack
         accessibleName: qsTr("go back")
         onClicked: page.closed()
     }

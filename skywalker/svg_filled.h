@@ -31,7 +31,6 @@ class SvgFilled : public QObject
     Q_PROPERTY(SvgImage stop MEMBER sStop CONSTANT FINAL)
     Q_PROPERTY(SvgImage unknownAvatar MEMBER sPerson CONSTANT FINAL)
     Q_PROPERTY(SvgImage unpin MEMBER sKeepOff CONSTANT FINAL)
-    QML_SINGLETON
     QML_ELEMENT
 
 public:

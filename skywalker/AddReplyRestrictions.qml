@@ -1,8 +1,6 @@
-pragma ComponentBehavior: Bound
-
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Material
+import QtQuick.Layouts
 import skywalker
 
 Dialog {
@@ -88,9 +86,9 @@ Dialog {
 
             AccessibleSwitch {
                 text: qsTr("Allow others to quote this post")
-                checked: restrictionDialog.allowQuoting
-                enabled: restrictionDialog.postgateReceived
-                onCheckedChanged: restrictionDialog.allowQuoting = checked
+                checked: allowQuoting
+                enabled: postgateReceived
+                onCheckedChanged: allowQuoting = checked
             }
 
             AccessibleText {
@@ -102,64 +100,62 @@ Dialog {
             }
 
             AccessibleCheckBox {
-                checked: !restrictionDialog.restrictReply
+                checked: !restrictReply
                 text: qsTr("Everyone")
-                visible: restrictionDialog.isThreadFromUser
+                visible: isThreadFromUser
                 onCheckedChanged: {
-                    restrictionDialog.restrictReply = !checked
+                    restrictReply = !checked
 
                     if (checked) {
-                        restrictionDialog.allowMentioned = false
-                        restrictionDialog.allowFollowing = false
-                        restrictionDialog.allowLists = [false, false, false]
+                        allowMentioned = false
+                        allowFollowing = false
+                        allowLists = [false, false, false]
                     }
                 }
             }
             AccessibleCheckBox {
-                checked: restrictionDialog.restrictReply && !restrictionDialog.allowMentioned &&
-                         !restrictionDialog.allowFollowing && !restrictionDialog.allowLists[0] &&
-                         !restrictionDialog.allowLists[1] && !restrictionDialog.allowLists[2]
+                checked: restrictReply && !allowMentioned && !allowFollowing && !allowLists[0] && !allowLists[1] && !allowLists[2]
                 text: qsTr("Nobody")
-                visible: restrictionDialog.isThreadFromUser
+                visible: isThreadFromUser
                 onCheckedChanged: {
                     if (checked) {
-                        restrictionDialog.restrictReply = true
-                        restrictionDialog.allowMentioned = false
-                        restrictionDialog.allowFollowing = false
-                        restrictionDialog.allowLists = [false, false, false]
+                        restrictReply = true
+                        allowMentioned = false
+                        allowFollowing = false
+                        allowLists = [false, false, false]
                     }
                 }
             }
             AccessibleCheckBox {
-                checked: restrictionDialog.allowMentioned
+                checked: allowMentioned
                 text: qsTr("Users mentioned in your post")
-                visible: restrictionDialog.isThreadFromUser
+                visible: isThreadFromUser
                 onCheckedChanged: {
-                    restrictionDialog.allowMentioned = checked
+                    allowMentioned = checked
 
                     if (checked)
-                        restrictionDialog.restrictReply = true
+                        restrictReply = true
                 }
             }
             AccessibleCheckBox {
-                checked: restrictionDialog.allowFollowing
+                checked: allowFollowing
                 text: qsTr("Users you follow")
-                visible: restrictionDialog.isThreadFromUser
+                visible: isThreadFromUser
                 onCheckStateChanged: {
-                    restrictionDialog.allowFollowing = checked
+                    allowFollowing = checked
 
                     if (checked)
-                        restrictionDialog.restrictReply = true
+                        restrictReply = true
                 }
             }
 
             Repeater {
-                // TODO is this needed: property alias restrictReply: restrictionDialog.restrictReply
+                property alias restrictReply: restrictionDialog.restrictReply
 
                 id: listRestrictions
                 width: parent.width
-                model: restrictionDialog.allowLists.length
-                visible: restrictionDialog.isThreadFromUser
+                model: allowLists.length
+                visible: isThreadFromUser
 
                 function available() {
                     const item = itemAt(0)
@@ -170,13 +166,13 @@ Dialog {
                     required property int index
 
                     width: parent.width
-                    visible: listComboBox.count > index && restrictionDialog.isThreadFromUser
+                    visible: listComboBox.count > index && isThreadFromUser
 
                     AccessibleCheckBox {
                         id: allowListCheckBox
-                        checked: restrictionDialog.allowLists[parent.index]
+                        checked: allowLists[parent.index]
                         text: qsTr("Users from list:")
-                        onCheckStateChanged: restrictionDialog.allowLists[parent.index] = checked
+                        onCheckStateChanged: allowLists[parent.index] = checked
                     }
                     PagingComboBox {
                         id: listComboBox
@@ -187,13 +183,13 @@ Dialog {
                         textRole: "listName"
                         inProgress: skywalker.getListListInProgress
                         bottomOvershootFun: () => skywalker.getListListNextPage(listModelId)
-                        initialIndex: restrictionDialog.allowListIndexes[parent.index]
-                        findValue: restrictionDialog.getListUriFromDraft(parent.index)
-                        backgroundColor: restrictionDialog.duplicateList[parent.index] ? guiSettings.errorColor : Material.dialogColor
-                        enabled: restrictionDialog.allowLists[parent.index]
+                        initialIndex: allowListIndexes[parent.index]
+                        findValue: getListUriFromDraft(parent.index)
+                        backgroundColor: duplicateList[parent.index] ? guiSettings.errorColor : Material.dialogColor
+                        enabled: allowLists[parent.index]
 
-                        onCurrentIndexChanged: restrictionDialog.allowListIndexes[parent.index] = currentIndex
-                        onValueFound: restrictionDialog.allowLists[parent.index] = true
+                        onCurrentIndexChanged: allowListIndexes[parent.index] = currentIndex
+                        onValueFound: allowLists[parent.index] = true
                     }
                 }
             }
@@ -204,7 +200,7 @@ Dialog {
                 wrapMode: Text.Wrap
                 font.italic: true
                 text: qsTr("User lists can also be used to restrict who can reply. You have no user lists at this moment.");
-                visible: restrictionDialog.isThreadFromUser && (listRestrictions.count === 0 || !listRestrictions.available())
+                visible: isThreadFromUser && (listRestrictions.count === 0 || !listRestrictions.available())
             }
 
             AccessibleText {
@@ -213,7 +209,7 @@ Dialog {
                 wrapMode: Text.Wrap
                 font.italic: true
                 text: qsTr("You cannot restrict replies as this is not your thread.")
-                visible: !restrictionDialog.isThreadFromUser
+                visible: !isThreadFromUser
             }
         }
     }

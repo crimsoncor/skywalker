@@ -66,12 +66,12 @@ Rectangle {
                     plainText: convo.memberNames
                 }
 
-                SkySvg {
+                SvgImage {
                     id: mutedImg
                     height: convo.muted ? nameText.height : 0
                     width: height
                     color: guiSettings.textColor
-                    svg: SvgOutline.notificationsOff
+                    svg: svgOutline.notificationsOff
                     visible: convo.muted
                 }
 
@@ -139,7 +139,7 @@ Rectangle {
                     Layout.preferredHeight: 34
                     iconColor: guiSettings.textColor
                     Material.background: "transparent"
-                    svg: SvgOutline.moreVert
+                    svg: svgOutline.moreVert
                     accessibleName: qsTr("more options")
                     onClicked: moreMenu.open()
 
@@ -158,13 +158,13 @@ Rectangle {
                             text: qsTr("Delete")
                             onTriggered: deleteConvo(convo)
 
-                            MenuItemSvg { svg: SvgOutline.delete }
+                            MenuItemSvg { svg: svgOutline.delete }
                         }
                         AccessibleMenuItem {
                             text: convo.muted ? qsTr("Unmute") : qsTr("Mute")
                             onTriggered: convo.muted ? unmuteConvo(convo) : muteConvo(convo)
 
-                            MenuItemSvg { svg: convo.muted ? SvgOutline.notifications : SvgOutline.notificationsOff }
+                            MenuItemSvg { svg: convo.muted ? svgOutline.notifications : svgOutline.notificationsOff }
                         }
                     }
                 }

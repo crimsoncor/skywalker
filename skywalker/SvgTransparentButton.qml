@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
-SkySvg {
+SvgImage {
     required property string accessibleName
     property bool enabled: true
 

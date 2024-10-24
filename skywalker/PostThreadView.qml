@@ -41,12 +41,12 @@ SkyListView {
                 height: restrictionText.height + 10
                 color: "transparent"
 
-                SkySvg {
+                SvgImage {
                     id: restrictionIcon
                     width: 20
                     height: 20
                     color: utils.determineForegroundColor(restrictionRect.color, "black", "white")
-                    svg: SvgOutline.replyRestrictions
+                    svg: svgOutline.replyRestrictions
                 }
                 SkyCleanedText {
                     id: restrictionText
@@ -130,7 +130,7 @@ SkyListView {
 
         PostButton {
             y: -height - 10
-            svg: SvgOutline.reply
+            svg: svgOutline.reply
             overrideOnClicked: () => reply()
 
             Accessible.role: Accessible.Button
