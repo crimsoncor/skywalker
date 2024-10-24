@@ -7,7 +7,7 @@ SvgImage {
     height: width
     color: guiSettings.moderatorIconColor
     outlineColor: guiSettings.backgroundColor
-    svg: svgFilled.moderator
+    svg: SvgFilled.moderator
 
     GuiSettings {
         id: guiSettings

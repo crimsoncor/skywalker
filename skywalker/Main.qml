@@ -67,13 +67,6 @@ ApplicationWindow {
         }
     }
 
-    SvgOutline {
-        id: svgOutline
-    }
-    SvgFilled {
-        id: svgFilled
-    }
-
     BusyIndicator {
         id: busyIndicator
         z: 200
@@ -598,7 +591,7 @@ ApplicationWindow {
                 SvgButton {
                     id: closeButton
                     anchors.right: parent.right
-                    svg: svgOutline.close
+                    svg: SvgOutline.close
                     accessibleName: qsTr("cancel repost")
                     onClicked: repostDrawer.close()
                 }
@@ -813,7 +806,7 @@ ApplicationWindow {
 
     function showAbout() {
         let component = Qt.createComponent("About.qml")
-        let page = component.createObject(root)
+        let page = component.createObject(root, { skywalker: skywalker })
         page.onClosed.connect(() => { popStack() })
         pushStack(page)
     }

@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
+import QtQuick.Controls.Material
 import skywalker
 
 Dialog {
@@ -18,8 +18,8 @@ Dialog {
     SkyTextInput {
         id: textInput
         width: parent.width
-        svgIcon: svgOutline.hashtag
-        initialText: focusHashtag
+        svgIcon: SvgOutline.hashtag
+        initialText: page.focusHashtag
         placeholderText: qsTr("Hashtag for focus")
         validator: RegularExpressionValidator { regularExpression: /[^ ]+/ }
         enabled: true

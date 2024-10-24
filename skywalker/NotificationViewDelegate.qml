@@ -132,7 +132,7 @@ Rectangle {
                 width: parent.width - 19
                 height: width
                 color: guiSettings.likeColor
-                svg: svgFilled.like
+                svg: SvgFilled.like
                 visible: notificationReason === QEnums.NOTIFICATION_REASON_LIKE
             }
             SvgImage {
@@ -141,7 +141,7 @@ Rectangle {
                 width: parent.width - 19
                 height: width
                 color: guiSettings.textColor
-                svg: svgOutline.repost
+                svg: SvgOutline.repost
                 visible: notificationReason === QEnums.NOTIFICATION_REASON_REPOST
             }
             SvgImage {
@@ -150,7 +150,7 @@ Rectangle {
                 width: parent.width - 19
                 height: width
                 color: guiSettings.textColor
-                svg: svgOutline.inviteCode
+                svg: SvgOutline.inviteCode
                 visible: notificationReason === QEnums.NOTIFICATION_REASON_INVITE_CODE_USED
             }
             SvgImage {
@@ -160,7 +160,7 @@ Rectangle {
                 height: width
                 color: guiSettings.moderatorIconColor
                 outlineColor: guiSettings.textColor
-                svg: svgFilled.moderator
+                svg: SvgFilled.moderator
                 visible: notificationReason === QEnums.NOTIFICATION_REASON_NEW_LABELS
             }
             Rectangle {
@@ -178,7 +178,7 @@ Rectangle {
                     width: parent.width - 10
                     height: width
                     color: "white"
-                    svg: svgFilled.newFollower
+                    svg: SvgFilled.newFollower
                 }
             }
         }

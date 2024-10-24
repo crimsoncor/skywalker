@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
+import QtQuick.Controls.Material
 import skywalker
 
 Dialog {
@@ -31,25 +31,29 @@ Dialog {
             width: parent.width
 
             AccessibleCheckBox {
-                checked: suggestive
+                checked: contentWarningDialog.suggestive
                 text: qsTr("Sexually suggestive")
-                onCheckedChanged: suggestive = checked
+                onCheckedChanged: contentWarningDialog.suggestive = checked
             }
             AccessibleCheckBox {
-                checked: nudity
+                checked: contentWarningDialog.nudity
                 text: qsTr("Non-sexual Nudity")
-                onCheckedChanged: nudity = checked
+                onCheckedChanged: contentWarningDialog.nudity = checked
             }
             AccessibleCheckBox {
-                checked: porn
+                checked: contentWarningDialog.porn
                 text: qsTr("Adult Content, e.g. pornography")
-                onCheckedChanged: porn = checked
+                onCheckedChanged: contentWarningDialog.porn = checked
             }
             AccessibleCheckBox {
-                checked: gore
+                checked: contentWarningDialog.gore
                 text: qsTr("Graphic Media, e.g. violent/bloody")
-                onCheckedChanged: gore = checked
+                onCheckedChanged: contentWarningDialog.gore = checked
             }
         }
+    }
+
+    GuiSettings {
+        id: guiSettings
     }
 }

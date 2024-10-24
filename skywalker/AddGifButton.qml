@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import skywalker
 
 SvgTransparentButton {
@@ -9,7 +8,7 @@ SvgTransparentButton {
 
     id: addGifButton
     accessibleName: qsTr("add GIF")
-    svg: svgOutline.addGif
+    svg: SvgOutline.addGif
 
     onClicked: selectGif()
 
@@ -28,4 +27,3 @@ SvgTransparentButton {
         root.pushStack(tenorSearchView)
     }
 }
-
