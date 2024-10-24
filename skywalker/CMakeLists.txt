@@ -104,7 +104,7 @@ qt_add_qml_module(libskywalker
         RoundedFrame.qml
         ThumbImageView.qml
         FullImageView.qml
-        SvgImage.qml
+        SkySvg.qml
         StatIcon.qml
         StatusPopup.qml
         TimelineView.qml
