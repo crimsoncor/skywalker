@@ -1,6 +1,4 @@
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
 import skywalker
 
 SkyPage {
@@ -21,7 +19,7 @@ SkyPage {
         title: qsTr("ALT text")
         buttonSvg: SvgOutline.check
         enabled: !altText.maxGraphemeLengthExceeded()
-        onButtonClicked: altTextChanged(page.text)
+        onButtonClicked: page.altTextChanged(page.text)
     }
 
     // Needed for SkyFormattedTextEdit
@@ -61,8 +59,8 @@ SkyPage {
             height: 180
             fillMode: Image.PreserveAspectCrop
             autoTransform: true
-            source: !sourceIsVideo ? page.imgSource : ""
-            visible: !sourceIsVideo
+            source: !page.sourceIsVideo ? page.imgSource : ""
+            visible: !page.sourceIsVideo
         }
 
         VideoThumbnail {
@@ -73,8 +71,8 @@ SkyPage {
             anchors.top: altText.bottom
             width: Math.min(height * 1.777, page.width - 2 * page.margin)
             height: 180
-            videoSource: sourceIsVideo ? page.imgSource : ""
-            visible: sourceIsVideo
+            videoSource: page.sourceIsVideo ? page.imgSource : ""
+            visible: page.sourceIsVideo
         }
     }
 

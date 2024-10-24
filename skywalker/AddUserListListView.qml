@@ -1,6 +1,6 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import skywalker
 
 ListView {
@@ -21,7 +21,7 @@ ListView {
 
     header: SimpleDescriptionHeader {
         title: qsTr("Update lists")
-        description: qsTr(`Add/remove ${author.name}`)
+        description: qsTr(`Add/remove ${view.author.name}`)
         onClosed: view.closed()
     }
     headerPositioning: ListView.OverlayHeader
@@ -29,7 +29,7 @@ ListView {
     delegate: AddUserListViewDelegate {
         width: view.width
 
-        onAddToList: (listUri) => graphUtils.addListUser(listUri, author)
+        onAddToList: (listUri) => graphUtils.addListUser(listUri, view.author)
         onRemoveFromList: (listUri, listItemUri) => graphUtils.removeListUser(listUri, listItemUri)
     }
 

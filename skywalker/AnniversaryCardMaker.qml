@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 import skywalker
 
@@ -28,7 +29,7 @@ SkyPage {
             anchors.verticalCenter: parent.verticalCenter
             svg: SvgOutline.check
             accessibleName: qsTr("add card")
-            onClicked: addCard(anniversaryCard.imageSource, page.years)
+            onClicked: page.addCard(anniversaryCard.imageSource, page.years)
         }
     }
 
@@ -54,12 +55,12 @@ SkyPage {
             RoundButton {
                 id: backgroundButton
                 Material.background: anniversaryCard.backgroundColor
-                onClicked: selectColor(anniversaryCard.backgroundColor, (color) => anniversaryCard.backgroundColor = color)
+                onClicked: page.selectColor(anniversaryCard.backgroundColor, (color) => anniversaryCard.backgroundColor = color)
             }
 
             AccessibleText {
                 Layout.fillWidth: true
-                height: backgroundButton.height
+                Layout.preferredHeight: backgroundButton.height
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
                 text: qsTr("Background")
@@ -73,12 +74,12 @@ SkyPage {
             RoundButton {
                 id: logoButton
                 Material.background: anniversaryCard.logoColor
-                onClicked: selectColor(anniversaryCard.logoColor, (color) => anniversaryCard.logoColor = color)
+                onClicked: page.selectColor(anniversaryCard.logoColor, (color) => anniversaryCard.logoColor = color)
             }
 
             AccessibleText {
                 Layout.fillWidth: true
-                height: logoButton.height
+                Layout.preferredHeight: logoButton.height
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
                 text: qsTr("Logo")
@@ -92,12 +93,12 @@ SkyPage {
             RoundButton {
                 id: ageButton
                 Material.background: anniversaryCard.ageColor
-                onClicked: selectColor(anniversaryCard.ageColor, (color) => anniversaryCard.ageColor = color)
+                onClicked: page.selectColor(anniversaryCard.ageColor, (color) => anniversaryCard.ageColor = color)
             }
 
             AccessibleText {
                 Layout.fillWidth: true
-                height: ageButton.height
+                Layout.preferredHeight: ageButton.height
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
                 text: qsTr("Number")

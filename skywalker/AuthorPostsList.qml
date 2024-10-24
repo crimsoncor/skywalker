@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -38,18 +39,18 @@ SkyListView {
     }
 
     delegate: PostFeedViewDelegate {
-        width: enclosingView.width
+        width: authorPostsList.enclosingView.width
     }
 
     FlickableRefresher {
         inProgress: skywalker.getAuthorFeedInProgress
         topOvershootFun: () => {
-            if (modelId >= 0)
-                getFeed(modelId)
+            if (authorPostsList.modelId >= 0)
+                authorPostsList.getFeed(authorPostsList.modelId)
         }
         bottomOvershootFun: () => {
-            if (modelId >= 0)
-                getFeedNextPage(modelId)
+            if (authorPostsList.modelId >= 0)
+                authorPostsList.getFeedNextPage(authorPostsList.modelId)
         }
         topText: qsTr("Pull down to refresh")
     }
@@ -62,8 +63,8 @@ SkyListView {
 
     EmptyListIndication {
         id: noPostIndication
-        svg: getEmptyListIndicationSvg()
-        text: getEmptyListIndicationText()
+        svg: authorPostsList.getEmptyListIndicationSvg()
+        text: authorPostsList.getEmptyListIndicationText()
         list: authorPostsList
         onLinkActivated: (link) => root.viewListByUri(link, false)
     }
@@ -73,8 +74,8 @@ SkyListView {
         elide: Text.ElideRight
         textFormat: Text.RichText
         text: `<br><a href=\"show\" style=\"color: ${guiSettings.linkColor}\">` + qsTr("Show profile") + "</a>"
-        visible: visibilityShowProfileLink(authorPostsList)
-        onLinkActivated: disableWarning()
+        visible: authorPostsList.visibilityShowProfileLink(authorPostsList)
+        onLinkActivated: authorPostsList.disableWarning()
     }
 
     Timer {
@@ -84,9 +85,9 @@ SkyListView {
         id: retryGetFeedTimer
         interval: 500
         onTriggered: {
-            if (modelId >= 0) {
-                console.debug("RETRY GET FEED:", modelId)
-                getFeed(modelId)
+            if (authorPostsList.modelId >= 0) {
+                console.debug("RETRY GET FEED:", authorPostsList.modelId)
+                authorPostsList.getFeed(authorPostsList.modelId)
             }
             else {
                 console.debug("NO MODEL")
@@ -125,7 +126,7 @@ SkyListView {
 
     function refresh() {
         if (modelId >= 0)
-            getFeed(modelId)
+            authorPostsList.getFeed(modelId)
     }
 
     function clear() {

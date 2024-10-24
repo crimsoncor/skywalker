@@ -1,6 +1,6 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import skywalker
 
 ListView {
@@ -62,7 +62,7 @@ ListView {
 
     FlickableRefresher {
         inProgress: skywalker.getAuthorListInProgress
-        topOvershootFun: () => refresh()
+        topOvershootFun: () => authorListView.refresh()
         bottomOvershootFun: () => skywalker.getAuthorListNextPage(modelId)
         topText: qsTr("Refresh")
     }
@@ -82,7 +82,7 @@ ListView {
         onUnfollowFailed: (error) => { statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR) }
         onRemoveListUserFailed: (error) => {
             statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
-            refresh()
+            authorListView.refresh()
         }
     }
 

@@ -11,7 +11,7 @@ RowLayout {
 
     // Avatar
     Rectangle {
-        width: 50
+        Layout.preferredWidth: 50
         Layout.fillHeight: true
         color: "transparent"
 
@@ -32,14 +32,14 @@ RowLayout {
             elide: Text.ElideRight
             font.bold: true
             color: guiSettings.textColor
-            plainText: author.name
+            plainText: authorItem.author.name
         }
         Text {
             width: parent.width
             elide: Text.ElideRight
             font.pointSize: guiSettings.scaledFont(7/8)
             color: guiSettings.handleColor
-            text: `@${author.handle}`
+            text: `@${authorItem.author.handle}`
         }
     }
 

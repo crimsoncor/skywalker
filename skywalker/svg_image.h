@@ -8,6 +8,7 @@ namespace Skywalker {
 
 class SvgImage
 {
+    //QML_INTERFACE
     Q_GADGET
     Q_PROPERTY(QString path MEMBER mPath CONSTANT FINAL)
     Q_PROPERTY(int width MEMBER mWidth CONSTANT FINAL)
@@ -32,4 +33,4 @@ private:
 
 }
 
-Q_DECLARE_METATYPE(::Skywalker::SvgImage)
+//Q_DECLARE_INTERFACE(Skywalker::SvgImage, "com.gmail.mfnboer.SvgImage")

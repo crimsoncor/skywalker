@@ -1,6 +1,7 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
+import QtQuick.Controls.Material
 import skywalker
 
 ComboBox {
@@ -13,7 +14,7 @@ ComboBox {
     onCountChanged: currentIndex = 0
 
     contentItem: AuthorItemDelegate {
-        author: selectedAuthor
+        author: authorComboBox.selectedAuthor
     }
 
     delegate: ItemDelegate {
@@ -21,11 +22,11 @@ ComboBox {
         required property var modelData
 
         id: delegate
-        width: popup.width
+        width: authorComboBox.popup.width
         highlighted: authorComboBox.highlightedIndex === index
 
         contentItem: AuthorItemDelegate {
-            author: modelData.author
+            author: delegate.modelData.author
         }
 
         background: Rectangle {
