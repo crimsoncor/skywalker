@@ -67,13 +67,6 @@ ApplicationWindow {
         }
     }
 
-    SvgOutline {
-        id: svgOutline
-    }
-    SvgFilled {
-        id: svgFilled
-    }
-
     BusyIndicator {
         id: busyIndicator
         z: 200
@@ -598,7 +591,7 @@ ApplicationWindow {
                 SvgButton {
                     id: closeButton
                     anchors.right: parent.right
-                    svg: svgOutline.close
+                    svg: SvgOutline.close
                     accessibleName: qsTr("cancel repost")
                     onClicked: repostDrawer.close()
                 }
