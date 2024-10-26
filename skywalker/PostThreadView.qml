@@ -1,6 +1,5 @@
+pragma ComponentBehavior: Bound
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
 import skywalker
 
 SkyListView {
@@ -13,7 +12,7 @@ SkyListView {
 
     id: view
     width: parent.width
-    model: skywalker.getPostThreadModel(modelId)
+    model: SkyRoot.skywalker().getPostThreadModel(modelId)
 
     header: SimpleHeader {
         height: restrictionRow.visible ? guiSettings.headerHeight + restrictionRow.height : guiSettings.headerHeight
@@ -25,10 +24,10 @@ SkyListView {
             width: parent.width
             height: restrictionRow.height + 5
             anchors.bottom: parent.bottom
-            color: guiSettings.threadStartColor(root.getSkywalker().getUserSettings().threadColor)
+            color: guiSettings.threadStartColor(SkyRoot.skywalker().getUserSettings().threadColor)
             border.width: 1
             border.color: guiSettings.headerColor
-            visible: model.replyRestriction !== QEnums.REPLY_RESTRICTION_NONE
+            visible: view.model.replyRestriction !== QEnums.REPLY_RESTRICTION_NONE
 
             Accessible.role: Accessible.StaticText
             Accessible.name: unicodeFonts.toPlainText(restrictionText.text)
@@ -54,7 +53,7 @@ SkyListView {
                     anchors.right: parent.right
                     leftPadding: 5
                     color: restrictionIcon.color
-                    ellipsisBackgroundColor: restrictionRect.color
+                    ellipsisBackgroundColor: restrictionRect.color.toString()
                     font.italic: true
                     font.pointSize: guiSettings.scaledFont(7/8)
                     wrapMode: Text.Wrap
@@ -65,10 +64,10 @@ SkyListView {
 
                     onLinkActivated: (link) => {
                         if (link.startsWith("did:")) {
-                            skywalker.getDetailedProfile(link)
+                            SkyRoot.skywalker().getDetailedProfile(link)
                         }
                         else if (link.startsWith("at:")) {
-                            root.viewListByUri(link, false)
+                            SkyRoot.root.viewListByUri(link, false)
                         }
                     }
 
@@ -76,7 +75,7 @@ SkyListView {
                 }
 
                 function getRestrictionText() {
-                    const replyRestriction = model.replyRestriction
+                    const replyRestriction = view.model.replyRestriction
 
                     if (replyRestriction === QEnums.REPLY_RESTRICTION_NONE)
                         return ""
@@ -131,10 +130,10 @@ SkyListView {
         PostButton {
             y: -height - 10
             svg: SvgOutline.reply
-            overrideOnClicked: () => reply()
+            overrideOnClicked: () => view.reply()
 
             Accessible.role: Accessible.Button
-            Accessible.name: qsTr(`reply to ${(getReplyToAuthor().name)}`)
+            Accessible.name: qsTr(`reply to ${(view.getReplyToAuthor().name)}`)
             Accessible.onPressAction: clicked()
         }
     }
@@ -144,20 +143,20 @@ SkyListView {
         width: view.width
 
         onCalibratedPosition: (dy) => {
-            calibrationDy += dy
+            view.calibrationDy += dy
 
             // Direct call sometimes causes the post to be not rendered
-            Qt.callLater(calibratePosition)
+            Qt.callLater(view.calibratePosition)
         }
 
-        onShowHiddenReplies: model.showHiddenReplies()
+        onShowHiddenReplies: view.model.showHiddenReplies()
     }
 
     FlickableRefresher {
-        inProgress: skywalker.getPostThreadInProgress
+        inProgress: SkyRoot.skywalker().getPostThreadInProgress
         topOvershootFun: () => {
-            syncToEntry = false
-            skywalker.getPostThread(model.getThreadEntryUri(), modelId)
+            view.syncToEntry = false
+            SkyRoot.skywalker().getPostThread(view.model.getThreadEntryUri(), view.modelId)
         }
         topText: qsTr("Pull down to refresh")
     }
@@ -173,7 +172,7 @@ SkyListView {
     Timer {
         id: syncTimer
         interval: 200
-        onTriggered: sync()
+        onTriggered: view.sync()
     }
 
     GuiSettings {
@@ -211,7 +210,7 @@ SkyListView {
         const postLanguages = model.getData(postEntryIndex, AbstractPostFeedModel.PostLanguages)
 
         const lang = postLanguages.length > 0 ? postLanguages[0].shortCode : ""
-        root.composeVideoReply(postUri, postCid, postText, postIndexedDateTime,
+        SkyRoot.root.composeVideoReply(postUri, postCid, postText, postIndexedDateTime,
                                author, postReplyRootUri, postReplyRootCid, lang,
                                initialText, videoSource)
     }

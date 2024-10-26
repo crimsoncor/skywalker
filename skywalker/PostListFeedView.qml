@@ -1,6 +1,6 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import skywalker
 
 SkyListView {
@@ -29,22 +29,22 @@ SkyListView {
         onClosed: postListFeedView.closed()
         onFeedAvatarClicked: {
             let list = postListFeedView.model.getListView()
-            root.viewListByUri(list.uri, false)
+            SkyRoot.root.viewListByUri(list.uri, false)
         }
     }
     headerPositioning: ListView.OverlayHeader
 
     footer: SkyFooter {
-        visible: showAsHome
+        visible: postListFeedView.showAsHome
         timeline: postListFeedView
         skywalker: postListFeedView.skywalker
         homeActive: true
         showHomeFeedBadge: true
         onHomeClicked: postListFeedView.positionViewAtBeginning()
-        onNotificationsClicked: root.viewNotifications()
-        onSearchClicked: root.viewSearchView()
-        onFeedsClicked: root.viewFeedsView()
-        onMessagesClicked: root.viewChat()
+        onNotificationsClicked: SkyRoot.root.viewNotifications()
+        onSearchClicked: SkyRoot.root.viewSearchView()
+        onFeedsClicked: SkyRoot.root.viewFeedsView()
+        onMessagesClicked: SkyRoot.root.viewChat()
     }
     footerPositioning: ListView.OverlayFooter
 
@@ -53,11 +53,11 @@ SkyListView {
     }
 
     FlickableRefresher {
-        inProgress: skywalker.getFeedInProgress
-        topOvershootFun: () => skywalker.getListFeed(modelId)
-        bottomOvershootFun: () => skywalker.getListFeedNextPage(modelId)
+        inProgress: SkyRoot.skywalker().getFeedInProgress
+        topOvershootFun: () => SkyRoot.skywalker().getListFeed(postListFeedView.modelId)
+        bottomOvershootFun: () => SkyRoot.skywalker().getListFeedNextPage(postListFeedView.modelId)
         topText: qsTr("Pull down to refresh feed")
-        enableScrollToTop: !showAsHome
+        enableScrollToTop: !postListFeedView.showAsHome
     }
 
     EmptyListIndication {
@@ -70,7 +70,7 @@ SkyListView {
     BusyIndicator {
         id: busyIndicator
         anchors.centerIn: parent
-        running: skywalker.getFeedInProgress
+        running: SkyRoot.skywalker().getFeedInProgress
     }
 
     GuiSettings {

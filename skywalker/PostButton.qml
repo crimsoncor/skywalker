@@ -1,12 +1,11 @@
 import QtQuick
-import QtQuick.Controls
 import skywalker
 
 SvgButton {
     property var overrideOnClicked
 
     id: button
-    x: 10 + (parent.width - width - 20) * root.postButtonRelativeX
+    x: 10 + (parent.width - width - 20) * SkyRoot.root.postButtonRelativeX
     width: 70
     height: width
     opacity: 0.6
@@ -16,7 +15,7 @@ SvgButton {
 
     onXChanged: {
         if (mouseArea.drag.active)
-            root.postButtonRelativeX = (x - 10) / (parent.width - width - 20)
+            SkyRoot.root.postButtonRelativeX = (x - 10) / (parent.width - width - 20)
     }
 
     MouseArea {
@@ -28,10 +27,10 @@ SvgButton {
         drag.maximumX: button.parent.width - button.width - 10
 
         onClicked: {
-            if (overrideOnClicked)
-                overrideOnClicked()
+            if (button.overrideOnClicked)
+                button.overrideOnClicked()
             else
-                root.composePost()
+                SkyRoot.root.composePost()
         }
     }
 }

@@ -1,6 +1,6 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import skywalker
 
 Item {
@@ -42,70 +42,71 @@ Item {
     signal pin()
     signal unpin()
 
+    id: postStats
     height: replyIcon.height + topPadding
 
     StatIcon {
         id: replyIcon
-        y: topPadding
+        y: postStats.topPadding
         width: parent.width / 4
         iconColor: enabled ? guiSettings.statsColor : guiSettings.disabledColor
         svg: SvgOutline.reply
-        statistic: replyCount
-        visible: !bookmarkNotFound
-        enabled: !replyDisabled
-        onClicked: reply()
+        statistic: postStats.replyCount
+        visible: !postStats.bookmarkNotFound
+        enabled: !postStats.replyDisabled
+        onClicked: postStats.reply()
 
-        Accessible.name: (replyDisabled ? qsTr("reply not allowed") : qsTr("reply")) + statSpeech(replyCount, "reply", "replies")
+        Accessible.name: (postStats.replyDisabled ? qsTr("reply not allowed") : qsTr("reply")) + postStats.statSpeech(postStats.replyCount, "reply", "replies")
     }
     StatIcon {
         id: repostIcon
-        y: topPadding
+        y: postStats.topPadding
         anchors.left: replyIcon.right
         width: parent.width / 4
-        iconColor: repostUri ? guiSettings.likeColor : guiSettings.statsColor
+        iconColor: postStats.repostUri ? guiSettings.likeColor : guiSettings.statsColor
         svg: SvgOutline.repost
-        statistic: repostCount
-        visible: !bookmarkNotFound
-        onClicked: repost()
+        statistic: postStats.repostCount
+        visible: !postStats.bookmarkNotFound
+        onClicked: postStats.repost()
 
-        Accessible.name: qsTr("repost") + statSpeech(repostCount, "repost", "reposts")
+        Accessible.name: qsTr("repost") + postStats.statSpeech(postStats.repostCount, "repost", "reposts")
     }
     StatIcon {
         id: likeIcon
-        y: topPadding
+        y: postStats.topPadding
         anchors.left: repostIcon.right
         width: parent.width / 4
-        iconColor: likeUri ? guiSettings.likeColor : guiSettings.statsColor
-        svg: likeUri ? SvgFilled.like : SvgOutline.like
-        statistic: likeCount
-        visible: !bookmarkNotFound
-        onClicked: like()
+        iconColor: postStats.likeUri ? guiSettings.likeColor : guiSettings.statsColor
+        svg: postStats.likeUri ? SvgFilled.like : SvgOutline.like
+        statistic: postStats.likeCount
+        visible: !postStats.bookmarkNotFound
+        onClicked: postStats.like()
 
-        Accessible.name: qsTr("like") + statSpeech(likeCount, "like", "likes")
+        Accessible.name: qsTr("like") + postStats.statSpeech(postStats.likeCount, "like", "likes")
 
         BlinkingOpacity {
             target: likeIcon
-            running: likeTransient
+            running: postStats.likeTransient
         }
     }
     StatIcon {
         id: bookmarkIcon
-        y: topPadding
+        y: postStats.topPadding
         anchors.left: likeIcon.right
         width: parent.width / 8
-        iconColor: isBookmarked ? guiSettings.buttonColor : guiSettings.statsColor
-        svg: isBookmarked ? SvgFilled.bookmark : SvgOutline.bookmark
-        onClicked: bookmark()
+        iconColor: postStats.isBookmarked ? guiSettings.buttonColor : guiSettings.statsColor
+        svg: postStats.isBookmarked ? SvgFilled.bookmark : SvgOutline.bookmark
+        onClicked: postStats.bookmark()
 
-        Accessible.name: isBookmarked ? qsTr("remove bookmark") : qsTr("bookmark")
+        Accessible.name: postStats.isBookmarked ? qsTr("remove bookmark") : qsTr("bookmark")
     }
     StatIcon {
         id: moreIcon
-        y: topPadding
+        y: postStats.topPadding
         anchors.left: bookmarkIcon.right
         width: parent.width / 8
         svg: SvgOutline.moreVert
-        visible: !bookmarkNotFound
+        visible: !postStats.bookmarkNotFound
         onClicked: moreMenuLoader.open()
 
         Accessible.name: qsTr("more options")
@@ -129,8 +130,8 @@ Item {
                 id: moreMenu
                 modal: true
 
-                onAboutToShow: root.enablePopupShield(true)
-                onAboutToHide: { root.enablePopupShield(false); parent.active = false }
+                onAboutToShow: SkyRoot.root.enablePopupShield(true)
+                onAboutToHide: { SkyRoot.root.enablePopupShield(false); parent.active = false }
 
                 CloseMenuItem {
                     text: qsTr("<b>Post</b>")
@@ -138,81 +139,81 @@ Item {
                 }
                 AccessibleMenuItem {
                     text: qsTr("Translate")
-                    onTriggered: translatePost()
+                    onTriggered: postStats.translatePost()
 
                     MenuItemSvg { svg: SvgOutline.googleTranslate }
                 }
 
                 AccessibleMenuItem {
                     text: qsTr("Copy post text")
-                    enabled: !embeddingDisabled
-                    onTriggered: copyPostText()
+                    enabled: !postStats.embeddingDisabled
+                    onTriggered: postStats.copyPostText()
 
                     MenuItemSvg { svg: SvgOutline.copy }
                 }
                 AccessibleMenuItem {
                     text: qsTr("Share")
-                    enabled: !embeddingDisabled
-                    onTriggered: share()
+                    enabled: !postStats.embeddingDisabled
+                    onTriggered: postStats.share()
 
                     MenuItemSvg { svg: SvgOutline.share }
                 }
                 AccessibleMenuItem {
-                    text: threadMuted ? qsTr("Unmute thread") : qsTr("Mute thread")
-                    visible: !isReply || replyRootUri
-                    onTriggered: muteThread()
+                    text: postStats.threadMuted ? qsTr("Unmute thread") : qsTr("Mute thread")
+                    visible: !postStats.isReply || postStats.replyRootUri
+                    onTriggered: postStats.muteThread()
 
-                    MenuItemSvg { svg: threadMuted ? SvgOutline.notifications : SvgOutline.notificationsOff }
+                    MenuItemSvg { svg: postStats.threadMuted ? SvgOutline.notifications : SvgOutline.notificationsOff }
                 }
 
                 AccessibleMenuItem {
-                    text: isHiddenReply ? qsTr("Unhide reply") : qsTr("Hide reply")
-                    visible: isReply && !authorIsUser && isThreadFromUser()
-                    onTriggered: hideReply()
+                    text: postStats.isHiddenReply ? qsTr("Unhide reply") : qsTr("Hide reply")
+                    visible: postStats.isReply && !postStats.authorIsUser && postStats.isThreadFromUser()
+                    onTriggered: postStats.hideReply()
 
-                    MenuItemSvg { svg: isHiddenReply ? SvgOutline.visibility : SvgOutline.hideVisibility }
+                    MenuItemSvg { svg: postStats.isHiddenReply ? SvgOutline.visibility : SvgOutline.hideVisibility }
                 }
 
                 AccessibleMenuItem {
                     text: qsTr("Restrictions")
-                    visible: authorIsUser
-                    onTriggered: threadgate()
+                    visible: postStats.authorIsUser
+                    onTriggered: postStats.threadgate()
 
-                    MenuItemSvg { svg: replyRestriction !== QEnums.REPLY_RESTRICTION_NONE ? SvgOutline.replyRestrictions : SvgOutline.noReplyRestrictions }
+                    MenuItemSvg { svg: postStats.replyRestriction !== QEnums.REPLY_RESTRICTION_NONE ? SvgOutline.replyRestrictions : SvgOutline.noReplyRestrictions }
                 }
 
                 AccessibleMenuItem {
-                    text: recordIsDetached() ? qsTr("Re-attach quote") : qsTr("Detach quote")
-                    visible: hasOwnRecord()
-                    onTriggered: detachQuote(getRecordPostUri(), !recordIsDetached())
+                    text: postStats.recordIsDetached() ? qsTr("Re-attach quote") : qsTr("Detach quote")
+                    visible: postStats.hasOwnRecord()
+                    onTriggered: postStats.detachQuote(postStats.getRecordPostUri(), !postStats.recordIsDetached())
 
-                    MenuItemSvg { svg: recordIsDetached() ? SvgOutline.attach : SvgOutline.detach }
+                    MenuItemSvg { svg: postStats.recordIsDetached() ? SvgOutline.attach : SvgOutline.detach }
                 }
 
                 AccessibleMenuItem {
-                    text: viewerStatePinned ? qsTr("Unpin from profile") : qsTr("Pin to profile")
-                    visible: authorIsUser
+                    text: postStats.viewerStatePinned ? qsTr("Unpin from profile") : qsTr("Pin to profile")
+                    visible: postStats.authorIsUser
                     onTriggered: {
-                        if (viewerStatePinned)
-                            unpin()
+                        if (postStats.viewerStatePinned)
+                            postStats.unpin()
                         else
-                            pin()
+                            postStats.pin()
                     }
 
-                    MenuItemSvg { svg: viewerStatePinned ? SvgFilled.unpin : SvgFilled.pin }
+                    MenuItemSvg { svg: postStats.viewerStatePinned ? SvgFilled.unpin : SvgFilled.pin }
                 }
 
                 AccessibleMenuItem {
                     text: qsTr("Delete")
-                    visible: authorIsUser
-                    onTriggered: deletePost()
+                    visible: postStats.authorIsUser
+                    onTriggered: postStats.deletePost()
 
                     MenuItemSvg { svg: SvgOutline.delete }
                 }
                 AccessibleMenuItem {
                     text: qsTr("Report post")
-                    visible: !authorIsUser
-                    onTriggered: reportPost()
+                    visible: !postStats.authorIsUser
+                    onTriggered: postStats.reportPost()
 
                     MenuItemSvg { svg: SvgOutline.report }
                 }
@@ -266,7 +267,7 @@ Item {
     }
 
     function isUserDid(did) {
-        return skywalker.getUserDid() === did
+        return SkyRoot.skywalker().getUserDid() === did
     }
 
     function statSpeech(stat, textSingular, textPlural) {

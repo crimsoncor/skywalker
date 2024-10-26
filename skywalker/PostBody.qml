@@ -1,5 +1,6 @@
+pragma ComponentBehavior: Bound
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 import skywalker
 
@@ -34,18 +35,18 @@ Column {
         width: parent.width
         Layout.fillWidth: true
         wrapMode: Text.Wrap
-        initialShowMaxLineCount: Math.min(maxTextLines, 25)
-        maximumLineCount: maxTextLines
+        initialShowMaxLineCount: Math.min(postBody.maxTextLines, 25)
+        maximumLineCount: postBody.maxTextLines
         ellipsisBackgroundColor: postBody.bodyBackgroundColor
         elide: Text.ElideRight
         textFormat: Text.RichText
         color: guiSettings.textColor
-        font.pointSize: getPostFontSize()
-        plainText: postText
-        bottomPadding: postImages.length > 0 || postVideo || postExternal || postRecord || postRecordWithMedia ? 5 : 0
-        visible: postVisible() && postText
+        font.pointSize: postBody.getPostFontSize()
+        plainText: postBody.postText
+        bottomPadding: postBody.postImages.length > 0 || postBody.postVideo || postBody.postExternal || postBody.postRecord || postBody.postRecordWithMedia ? 5 : 0
+        visible: postBody.postVisible() && postBody.postText
 
-        onLinkActivated: (link) => root.openLink(link)
+        onLinkActivated: (link) => SkyRoot.root.openLink(link)
 
         Accessible.ignored: true
 
@@ -53,14 +54,14 @@ Column {
             anchors.fill: parent
             z: parent.z - 1
             radius: 5
-            color: postHighlightColor
+            color: postBody.postHighlightColor
             opacity: guiSettings.focusHighlightOpacity
         }
     }
 
     Loader {
         width: parent.width
-        active: !postVisible()
+        active: !postBody.postVisible()
         visible: status == Loader.Ready
         sourceComponent: Row {
             width: parent.width
@@ -74,7 +75,7 @@ Column {
                 svg: getIcon()
 
                 function getIcon() {
-                    if (!mutePost)
+                    if (!postBody.mutePost)
                         return SvgOutline.hideVisibility
 
                     switch (postMuted) {
@@ -98,13 +99,13 @@ Column {
                 elide: Text.ElideRight
                 textFormat: Text.RichText
                 color: Material.color(Material.Grey)
-                text: postContentWarning + `<br><a href=\"show\" style=\"color: ${guiSettings.linkColor};\">` + qsTr("Show post") + "</a>"
-                visible: postContentVisibility === QEnums.CONTENT_VISIBILITY_WARN_POST && !showWarnedPost && !mutePost
+                text: postBody.postContentWarning + `<br><a href=\"show\" style=\"color: ${guiSettings.linkColor};\">` + qsTr("Show post") + "</a>"
+                visible: postBody.postContentVisibility === QEnums.CONTENT_VISIBILITY_WARN_POST && !postBody.showWarnedPost && !postBody.mutePost
                 onLinkActivated: {
-                    showWarnedPost = true
+                    postBody.showWarnedPost = true
 
-                    if (postVisible())
-                        showPostAttachements()
+                    if (postBody.postVisible())
+                        postBody.showPostAttachements()
                 }
             }
 
@@ -118,14 +119,14 @@ Column {
                 elide: Text.ElideRight
                 textFormat: Text.RichText
                 color: Material.color(Material.Grey)
-                text: getMuteText() + `<br><a href=\"show\" style=\"color: ${guiSettings.linkColor};\">` + qsTr("Show post") + "</a>"
-                visible: mutePost && postContentVisibility !== QEnums.CONTENT_VISIBILITY_HIDE_POST
+                text: postBody.getMuteText() + `<br><a href=\"show\" style=\"color: ${guiSettings.linkColor};\">` + qsTr("Show post") + "</a>"
+                visible: postBody.mutePost && postBody.postContentVisibility !== QEnums.CONTENT_VISIBILITY_HIDE_POST
                 onLinkActivated: {
-                    mutePost = false
+                    postBody.mutePost = false
 
                     // The post may still not be visible due to content filtering
-                    if (postVisible())
-                        showPostAttachements()
+                    if (postBody.postVisible())
+                        postBody.showPostAttachements()
                 }
             }
 
@@ -139,8 +140,8 @@ Column {
                 elide: Text.ElideRight
                 textFormat: Text.RichText
                 color: Material.color(Material.Grey)
-                text: postContentWarning
-                visible: postContentVisibility === QEnums.CONTENT_VISIBILITY_HIDE_POST
+                text: postBody.postContentWarning
+                visible: postBody.postContentVisibility === QEnums.CONTENT_VISIBILITY_HIDE_POST
             }
         }
     }
@@ -172,7 +173,7 @@ Column {
     Loader {
         id: dateTimeLoader
         width: parent.width
-        active: detailedView
+        active: postBody.detailedView
         visible: status == Loader.Ready
         sourceComponent: Text {
             width: parent.width
@@ -180,7 +181,7 @@ Column {
             Layout.fillWidth: true
             elide: Text.ElideRight
             color: Material.color(Material.Grey)
-            text: postDateTime.toLocaleString(Qt.locale(), Locale.ShortFormat)
+            text: postBody.postDateTime.toLocaleString(Qt.locale(), Locale.ShortFormat)
             font.pointSize: guiSettings.scaledFont(7/8)
         }
     }
@@ -218,7 +219,7 @@ Column {
     }
 
     function getPostFontSize() {
-        if (!root.getSkywalker().getUserSettings().giantEmojis)
+        if (!SkyRoot.root.getSkywalker().getUserSettings().giantEmojis)
             return guiSettings.scaledFont(1)
 
         return onlyEmojisPost() ?
@@ -237,7 +238,7 @@ Column {
     }
 
     function mustShowLangaugess() {
-        return root.getSkywalker().getUserSettings().getShowLanguageTags()
+        return SkyRoot.root.getSkywalker().getUserSettings().getShowLanguageTags()
     }
 
     function showPostAttachements() {

@@ -1,6 +1,6 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import skywalker
 
 SkyListView {
@@ -31,16 +31,16 @@ SkyListView {
     headerPositioning: ListView.OverlayHeader
 
     footer: SkyFooter {
-        visible: showAsHome
+        visible: postFeedView.showAsHome
         timeline: postFeedView
         skywalker: postFeedView.skywalker
         homeActive: true
         showHomeFeedBadge: true
         onHomeClicked: postFeedView.positionViewAtBeginning()
-        onNotificationsClicked: root.viewNotifications()
-        onSearchClicked: root.viewSearchView()
-        onFeedsClicked: root.viewFeedsView()
-        onMessagesClicked: root.viewChat()
+        onNotificationsClicked: SkyRoot.root.viewNotifications()
+        onSearchClicked: SkyRoot.root.viewSearchView()
+        onFeedsClicked: SkyRoot.root.viewFeedsView()
+        onMessagesClicked: SkyRoot.root.viewChat()
     }
     footerPositioning: ListView.OverlayFooter
 
@@ -49,12 +49,12 @@ SkyListView {
     }
 
     FlickableRefresher {
-        inProgress: skywalker.getFeedInProgress
+        inProgress: SkyRoot.skywalker().getFeedInProgress
         verticalOvershoot: postFeedView.verticalOvershoot
-        topOvershootFun: () => skywalker.getFeed(modelId)
-        bottomOvershootFun: () => skywalker.getFeedNextPage(modelId)
+        topOvershootFun: () => SkyRoot.skywalker().getFeed(postFeedView.modelId)
+        bottomOvershootFun: () => SkyRoot.skywalker().getFeedNextPage(postFeedView.modelId)
         topText: qsTr("Pull down to refresh feed")
-        enableScrollToTop: !showAsHome
+        enableScrollToTop: !postFeedView.showAsHome
     }
 
     EmptyListIndication {
@@ -67,7 +67,7 @@ SkyListView {
     BusyIndicator {
         id: busyIndicator
         anchors.centerIn: parent
-        running: skywalker.getFeedInProgress
+        running: SkyRoot.skywalker().getFeedInProgress
     }
 
     GuiSettings {
