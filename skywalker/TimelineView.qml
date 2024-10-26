@@ -1,6 +1,6 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import skywalker
 
 SkyListView {
@@ -27,11 +27,11 @@ SkyListView {
         timeline: timelineView
         skywalker: timelineView.skywalker
         homeActive: true
-        onHomeClicked: moveToPost(0)
-        onNotificationsClicked: root.viewNotifications()
-        onSearchClicked: root.viewSearchView()
-        onFeedsClicked: root.viewFeedsView()
-        onMessagesClicked: root.viewChat()
+        onHomeClicked: timelineView.moveToPost(0)
+        onNotificationsClicked: SkyRoot.root.viewNotifications()
+        onSearchClicked: SkyRoot.root.viewSearchView()
+        onFeedsClicked: SkyRoot.root.viewFeedsView()
+        onMessagesClicked: SkyRoot.root.viewChat()
     }
     footerPositioning: ListView.OverlayFooter
 
@@ -39,8 +39,8 @@ SkyListView {
         width: timelineView.width
 
         onCalibratedPosition: (dy) => {
-            calibrationDy += dy
-            calibratePosition()
+            timelineView.calibrationDy += dy
+            timelineView.calibratePosition()
         }
     }
 
@@ -67,10 +67,10 @@ SkyListView {
     }
 
     FlickableRefresher {
-        inProgress: skywalker.getTimelineInProgress
-        topOvershootFun: () => skywalker.getTimeline(50)
-        bottomOvershootFun: () => skywalker.getTimelineNextPage()
-        scrollToTopFun: () => moveToPost(0)
+        inProgress: timelineView.skywalker.getTimelineInProgress
+        topOvershootFun: () => timelineView.skywalker.getTimeline(50)
+        bottomOvershootFun: () => timelineView.skywalker.getTimelineNextPage()
+        scrollToTopFun: () => timelineView.moveToPost(0)
         enabled: timelineView.inSync
         topText: qsTr("Pull down to refresh timeline")
         enableScrollToTop: false
@@ -86,7 +86,7 @@ SkyListView {
     BusyIndicator {
         id: busyIndicator
         anchors.centerIn: parent
-        running: skywalker.getTimelineInProgress && !skywalker.autoUpdateTimelineInProgress
+        running: timelineView.skywalker.getTimelineInProgress && !timelineView.skywalker.autoUpdateTimelineInProgress
         Accessible.role: Accessible.ProgressBar
     }
 

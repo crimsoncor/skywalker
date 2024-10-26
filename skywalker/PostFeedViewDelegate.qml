@@ -1,12 +1,13 @@
-﻿import QtQuick
-import QtQuick.Controls
+﻿pragma ComponentBehavior: Bound
+import QtQuick
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 import skywalker
 
 Rectangle {
     readonly property int margin: 10
-    readonly property int threadStyle: root.getSkywalker().getUserSettings().threadStyle
-    readonly property string threadColor: root.getSkywalker().getUserSettings().threadColor
+    readonly property int threadStyle: SkyRoot.skywalker().getUserSettings().threadStyle
+    readonly property string threadColor: SkyRoot.skywalker().getUserSettings().threadColor
 
     required property basicprofile author
     required property string postUri
@@ -119,29 +120,29 @@ Rectangle {
         Rectangle {
             id: topLeftSpace
             Layout.leftMargin: 8 + (avatarImg.width - width) / 2
-            width: threadStyle === QEnums.THREAD_STYLE_BAR ? avatarImg.width : guiSettings.threadLineWidth
-            Layout.preferredHeight: postEntry.margin * (!postParentInThread && (postType === QEnums.POST_REPLY || postType === QEnums.POST_LAST_REPLY) ? 2 : 1)
+            Layout.preferredWidth: postEntry.threadStyle === QEnums.THREAD_STYLE_BAR ? avatarImg.width : guiSettings.threadLineWidth
+            Layout.preferredHeight: postEntry.margin * (!postEntry.postParentInThread && (postEntry.postType === QEnums.POST_REPLY || postEntry.postType === QEnums.POST_LAST_REPLY) ? 2 : 1)
 
             color: {
-                switch (postType) {
+                switch (postEntry.postType) {
                 case QEnums.POST_ROOT:
-                    return postIsReply ? guiSettings.threadStartColor(threadColor) : "transparent"
+                    return postEntry.postIsReply ? guiSettings.threadStartColor(postEntry.threadColor) : "transparent"
                 case QEnums.POST_REPLY:
                 case QEnums.POST_LAST_REPLY:
-                    return !postParentInThread ? "transparent" : guiSettings.threadMidColor(threadColor)
+                    return !postEntry.postParentInThread ? "transparent" : guiSettings.threadMidColor(postEntry.threadColor)
                 case QEnums.POST_THREAD: {
-                    if (postThreadType & QEnums.THREAD_FIRST_DIRECT_CHILD) {
-                        return guiSettings.threadStartColor(threadColor)
-                    } else if ((postThreadType & QEnums.THREAD_DIRECT_CHILD) ||
-                               (postThreadType & QEnums.THREAD_ENTRY)){
-                        return (postThreadType & QEnums.THREAD_TOP) ? "transparent" : guiSettings.threadEntryColor(threadColor)
-                    } else if (postThreadType & QEnums.THREAD_TOP) {
+                    if (postEntry.postThreadType & QEnums.THREAD_FIRST_DIRECT_CHILD) {
+                        return guiSettings.threadStartColor(postEntry.threadColor)
+                    } else if ((postEntry.postThreadType & QEnums.THREAD_DIRECT_CHILD) ||
+                               (postEntry.postThreadType & QEnums.THREAD_ENTRY)){
+                        return (postEntry.postThreadType & QEnums.THREAD_TOP) ? "transparent" : guiSettings.threadEntryColor(postEntry.threadColor)
+                    } else if (postEntry.postThreadType & QEnums.THREAD_TOP) {
                         return "transparent"
-                    } else if (postThreadType & QEnums.THREAD_PARENT) {
-                        return guiSettings.threadStartColor(threadColor)
+                    } else if (postEntry.postThreadType & QEnums.THREAD_PARENT) {
+                        return guiSettings.threadStartColor(postEntry.threadColor)
                     }
 
-                    return guiSettings.threadMidColor(threadColor)
+                    return guiSettings.threadMidColor(postEntry.threadColor)
                 }
                 default:
                     return "transparent"
@@ -154,21 +155,21 @@ Rectangle {
                 y: postEntry.margin - (height / 2)
                 width: parent.width
                 height: 6
-                color: guiSettings.threadMidColor(threadColor)
-                visible: !postParentInThread && (postType === QEnums.POST_REPLY || postType === QEnums.POST_LAST_REPLY)
+                color: guiSettings.threadMidColor(postEntry.threadColor)
+                visible: !postEntry.postParentInThread && (postEntry.postType === QEnums.POST_REPLY || postEntry.postType === QEnums.POST_LAST_REPLY)
             }
         }
         Rectangle {
-            width: parent.width - guiSettings.threadColumnWidth - postEntry.margin * 2
+            Layout.preferredWidth: parent.width - guiSettings.threadColumnWidth - postEntry.margin * 2
             Layout.preferredHeight: topLeftSpace.height
             color: "transparent"
         }
 
         // Pinned post
         Loader {
-            width: guiSettings.threadColumnWidth
+            Layout.preferredWidth: guiSettings.threadColumnWidth
             Layout.fillHeight: true
-            active: postIsPinned && !postLocallyDeleted
+            active: postEntry.postIsPinned && !postEntry.postLocallyDeleted
             visible: status == Loader.Ready
             sourceComponent: Rectangle {
                 width: parent.width
@@ -186,7 +187,7 @@ Rectangle {
         }
         Loader {
             Layout.fillWidth: true
-            active: postIsPinned && !postLocallyDeleted
+            active: postEntry.postIsPinned && !postEntry.postLocallyDeleted
             visible: status == Loader.Ready
             sourceComponent: AccessibleText {
                 width: parent.width
@@ -200,9 +201,9 @@ Rectangle {
 
         // Repost information
         Loader {
-            width: guiSettings.threadColumnWidth
+            Layout.preferredWidth: guiSettings.threadColumnWidth
             Layout.fillHeight: true
-            active: !postRepostedByAuthor.isNull() && !postGapId && !postLocallyDeleted
+            active: !postEntry.postRepostedByAuthor.isNull() && !postEntry.postGapId && !postEntry.postLocallyDeleted
             visible: status == Loader.Ready
             sourceComponent: Rectangle {
                 width: parent.width
@@ -220,13 +221,13 @@ Rectangle {
         }
         Loader {
             Layout.fillWidth: true
-            active: !postRepostedByAuthor.isNull() && !postGapId && !postLocallyDeleted
+            active: !postEntry.postRepostedByAuthor.isNull() && !postEntry.postGapId && !postEntry.postLocallyDeleted
             visible: status == Loader.Ready
             sourceComponent: SkyCleanedText {
                 id: repostedByText
                 width: parent.width
                 elide: Text.ElideRight
-                plainText: qsTr(`Reposted by ${postRepostedByAuthor.name}`)
+                plainText: qsTr(`Reposted by ${postEntry.postRepostedByAuthor.name}`)
                 color: Material.color(Material.Grey)
                 font.bold: true
                 font.pointSize: guiSettings.scaledFont(7/8)
@@ -234,7 +235,7 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: skywalker.getDetailedProfile(postRepostedByAuthor.did)
+                    onClicked: SkyRoot.skywalker().getDetailedProfile(postEntry.postRepostedByAuthor.did)
                 }
             }
         }
@@ -242,37 +243,37 @@ Rectangle {
         // Author and content
         Rectangle {
             id: avatar
-            width: guiSettings.threadColumnWidth
+            Layout.preferredWidth: guiSettings.threadColumnWidth
             Layout.fillHeight: true
             color: "transparent"
             opacity: 0.9
 
             Rectangle {
                 x: avatarImg.x + (avatarImg.width - width) / 2
-                y: ((postType === QEnums.POST_ROOT && !postIsReply) || (postThreadType & QEnums.THREAD_TOP)) ? avatarImg.y + avatarImg.height / 2 : 0
-                width: threadStyle === QEnums.THREAD_STYLE_LINE ? guiSettings.threadLineWidth : avatarImg.width
-                height: ((postType === QEnums.POST_LAST_REPLY) || (postThreadType & QEnums.THREAD_LEAF)) && postReplyCount === 0 ? avatarImg.y + avatarImg.height / 2 - y : parent.height - y
+                y: ((postEntry.postType === QEnums.POST_ROOT && !postEntry.postIsReply) || (postEntry.postThreadType & QEnums.THREAD_TOP)) ? avatarImg.y + avatarImg.height / 2 : 0
+                width: postEntry.threadStyle === QEnums.THREAD_STYLE_LINE ? guiSettings.threadLineWidth : avatarImg.width
+                height: ((postEntry.postType === QEnums.POST_LAST_REPLY) || (postEntry.postThreadType & QEnums.THREAD_LEAF)) && postEntry.postReplyCount === 0 ? avatarImg.y + avatarImg.height / 2 - y : parent.height - y
 
                 // Gradient is used display thread context.
                 gradient: Gradient {
                     GradientStop {
                         position: 0.0
                         color: {
-                            switch (postType) {
+                            switch (postEntry.postType) {
                             case QEnums.POST_ROOT:
-                                return guiSettings.threadStartColor(threadColor)
+                                return guiSettings.threadStartColor(postEntry.threadColor)
                             case QEnums.POST_REPLY:
                             case QEnums.POST_LAST_REPLY:
-                                return guiSettings.threadMidColor(threadColor)
+                                return guiSettings.threadMidColor(postEntry.threadColor)
                             case QEnums.POST_THREAD: {
-                                if (postThreadType & QEnums.THREAD_ENTRY) {
-                                    return guiSettings.threadEntryColor(threadColor)
-                                } else if ((postThreadType & QEnums.THREAD_PARENT) ||
-                                        (postThreadType & QEnums.THREAD_DIRECT_CHILD)) {
-                                    return guiSettings.threadStartColor(threadColor)
+                                if (postEntry.postThreadType & QEnums.THREAD_ENTRY) {
+                                    return guiSettings.threadEntryColor(postEntry.threadColor)
+                                } else if ((postEntry.postThreadType & QEnums.THREAD_PARENT) ||
+                                        (postEntry.postThreadType & QEnums.THREAD_DIRECT_CHILD)) {
+                                    return guiSettings.threadStartColor(postEntry.threadColor)
                                 }
 
-                                return guiSettings.threadMidColor(threadColor)
+                                return guiSettings.threadMidColor(postEntry.threadColor)
                             }
                             default:
                                 return guiSettings.backgroundColor
@@ -282,24 +283,24 @@ Rectangle {
                     GradientStop {
                         position: 1.0
                         color: {
-                            switch (postType) {
+                            switch (postEntry.postType) {
                             case QEnums.POST_STANDALONE:
                                 return guiSettings.backgroundColor
                             case QEnums.POST_LAST_REPLY:
-                                return guiSettings.threadEndColor(threadColor)
+                                return guiSettings.threadEndColor(postEntry.threadColor)
                             case QEnums.POST_THREAD: {
-                                if (postThreadType & QEnums.THREAD_ENTRY) {
-                                    return guiSettings.threadEntryColor(threadColor)
-                                } else if (postThreadType & QEnums.THREAD_PARENT) {
-                                    return guiSettings.threadStartColor(threadColor)
-                                } else if (postThreadType & QEnums.THREAD_LEAF) {
-                                    return guiSettings.threadEndColor(threadColor)
+                                if (postEntry.postThreadType & QEnums.THREAD_ENTRY) {
+                                    return guiSettings.threadEntryColor(postEntry.threadColor)
+                                } else if (postEntry.postThreadType & QEnums.THREAD_PARENT) {
+                                    return guiSettings.threadStartColor(postEntry.threadColor)
+                                } else if (postEntry.postThreadType & QEnums.THREAD_LEAF) {
+                                    return guiSettings.threadEndColor(postEntry.threadColor)
                                 }
 
-                                return guiSettings.threadMidColor(threadColor)
+                                return guiSettings.threadMidColor(postEntry.threadColor)
                             }
                             default:
-                                return guiSettings.threadMidColor(threadColor)
+                                return guiSettings.threadMidColor(postEntry.threadColor)
                             }
                         }
                     }
@@ -312,9 +313,9 @@ Rectangle {
                 y: postHeader.y + 5 // For some reason "avatar.y + 5" does not work when it is a repost
                 width: parent.width - 13
                 author: postEntry.author
-                visible: !postIsPlaceHolder && !postLocallyDeleted
+                visible: !postEntry.postIsPlaceHolder && !postEntry.postLocallyDeleted
 
-                onClicked: skywalker.getDetailedProfile(author.did)
+                onClicked: SkyRoot.skywalker().getDetailedProfile(author.did)
 
                 Accessible.role: Accessible.Button
                 Accessible.name: qsTr(`show profile of ${author.name}`)
@@ -326,8 +327,8 @@ Rectangle {
             // Change from width to Layout.preferredWidth seems to solve the issue
             // where posts sometimes are too wide (like landscape mode) but makes
             // things very slow :-(
-            width: parent.width - guiSettings.threadColumnWidth - postEntry.margin * 2
-            visible: !postIsPlaceHolder && !postLocallyDeleted
+            Layout.preferredWidth: parent.width - guiSettings.threadColumnWidth - postEntry.margin * 2
+            visible: !postEntry.postIsPlaceHolder && !postEntry.postLocallyDeleted
 
             PostHeader {
                 id: postHeader
@@ -340,18 +341,18 @@ Rectangle {
             // Reply to
             Loader {
                 width: parent.width
-                active: postIsReply && (!postParentInThread || postType === QEnums.POST_ROOT) && postType !== QEnums.POST_THREAD
+                active: postEntry.postIsReply && (!postEntry.postParentInThread || postEntry.postType === QEnums.POST_ROOT) && postEntry.postType !== QEnums.POST_THREAD
                 visible: status == Loader.Ready
                 sourceComponent: ReplyToRow {
                     width: parent.width
-                    text: qsTr(`Reply to ${postReplyToAuthor.name}`)
+                    text: qsTr(`Reply to ${postEntry.postReplyToAuthor.name}`)
                 }
             }
 
             // Reply hidden by user
             Loader {
                 width: parent.width
-                active: postIsHiddenReply && isUserDid(postReplyRootAuthorDid)
+                active: postEntry.postIsHiddenReply && postEntry.isUserDid(postEntry.postReplyRootAuthorDid)
                 visible: status == Loader.Ready
                 sourceComponent: ReplyToRow {
                     width: parent.width
@@ -363,12 +364,12 @@ Rectangle {
             PostBody {
                 id: postBody
                 width: parent.width
-                postAuthor: author
+                postAuthor: postEntry.author
                 postText: postEntry.postText
                 postPlainText: postEntry.postPlainText
                 postImages: postEntry.postImages
-                postLanguageLabels: postLanguages
-                postContentLabels: postLabels
+                postLanguageLabels: postEntry.postLanguages
+                postContentLabels: postEntry.postLabels
                 postContentVisibility: postEntry.postContentVisibility
                 postContentWarning: postEntry.postContentWarning
                 postMuted: postEntry.postMutedReason
@@ -377,15 +378,15 @@ Rectangle {
                 postRecord: postEntry.postRecord
                 postRecordWithMedia: postEntry.postRecordWithMedia
                 postDateTime: postEntry.postIndexedDateTime
-                detailedView: postThreadType & QEnums.THREAD_ENTRY
-                bodyBackgroundColor: postEntry.color
+                detailedView: postEntry.postThreadType & QEnums.THREAD_ENTRY
+                bodyBackgroundColor: postEntry.color.toString()
                 postHighlightColor: postEntry.postHighlightColor
             }
 
             // Reposts and likes in detailed view of post entry in thread view
             Loader {
                 width: parent.width
-                active: postThreadType & QEnums.THREAD_ENTRY
+                active: postEntry.postThreadType & QEnums.THREAD_ENTRY
                 visible: status == Loader.Ready
                 sourceComponent: Flow {
                     width: parent.width
@@ -394,20 +395,20 @@ Rectangle {
                     spacing: 10
 
                     StatAuthors {
-                        atUri: postUri
-                        count: postRepostCount
+                        atUri: postEntry.postUri
+                        count: postEntry.postRepostCount
                         nameSingular: qsTr("repost")
                         namePlural: qsTr("reposts")
                         authorListType: QEnums.AUTHOR_LIST_REPOSTS
                         authorListHeader: qsTr("Reposted by")
                     }
                     StatQuotes {
-                        atUri: postUri
-                        count: postQuoteCount
+                        atUri: postEntry.postUri
+                        count: postEntry.postQuoteCount
                     }
                     StatAuthors {
-                        atUri: postUri
-                        count: postLikeCount
+                        atUri: postEntry.postUri
+                        count: postEntry.postLikeCount
                         nameSingular: qsTr("like")
                         namePlural: qsTr("likes")
                         authorListType: QEnums.AUTHOR_LIST_LIKES
@@ -420,63 +421,63 @@ Rectangle {
             PostStats {
                 width: parent.width
                 topPadding: 10
-                replyCount: postReplyCount
-                repostCount: postRepostCount + postQuoteCount
-                likeCount: postLikeCount
-                repostUri: postRepostUri
-                likeUri: postLikeUri
-                likeTransient: postLikeTransient
-                threadMuted: postThreadMuted
-                replyDisabled: postReplyDisabled
-                embeddingDisabled: postEmbeddingDisabled
-                viewerStatePinned: postViewerStatePinned
-                replyRestriction: postReplyRestriction
-                isHiddenReply: postIsHiddenReply
-                isReply: postIsReply
-                replyRootAuthorDid: postReplyRootAuthorDid
-                replyRootUri: postReplyRootUri
-                authorIsUser: isUser(author)
-                isBookmarked: postBookmarked
-                bookmarkNotFound: postBookmarkNotFound
-                record: postRecord
-                recordWithMedia: postRecordWithMedia
+                replyCount: postEntry.postReplyCount
+                repostCount: postEntry.postRepostCount + postEntry.postQuoteCount
+                likeCount: postEntry.postLikeCount
+                repostUri: postEntry.postRepostUri
+                likeUri: postEntry.postLikeUri
+                likeTransient: postEntry.postLikeTransient
+                threadMuted: postEntry.postThreadMuted
+                replyDisabled: postEntry.postReplyDisabled
+                embeddingDisabled: postEntry.postEmbeddingDisabled
+                viewerStatePinned: postEntry.postViewerStatePinned
+                replyRestriction: postEntry.postReplyRestriction
+                isHiddenReply: postEntry.postIsHiddenReply
+                isReply: postEntry.postIsReply
+                replyRootAuthorDid: postEntry.postReplyRootAuthorDid
+                replyRootUri: postEntry.postReplyRootUri
+                authorIsUser: postEntry.isUser(postEntry.author)
+                isBookmarked: postEntry.postBookmarked
+                bookmarkNotFound: postEntry.postBookmarkNotFound
+                record: postEntry.postRecord
+                recordWithMedia: postEntry.postRecordWithMedia
 
                 onReply: {
-                    const lang = postLanguages.length > 0 ? postLanguages[0].shortCode : ""
-                    root.composeReply(postUri, postCid, postText, postIndexedDateTime,
-                                      author, postReplyRootUri, postReplyRootCid, lang)
+                    const lang = postEntry.postLanguages.length > 0 ? postEntry.postLanguages[0].shortCode : ""
+                    SkyRoot.root.composeReply(postEntry.postUri, postEntry.postCid, postEntry.postText, postEntry.postIndexedDateTime,
+                                      postEntry.author, postEntry.postReplyRootUri, postEntry.postReplyRootCid, lang)
                 }
 
                 onRepost: {
-                    root.repost(postRepostUri, postUri, postCid, postText,
-                                postIndexedDateTime, author, postEmbeddingDisabled)
+                    SkyRoot.root.repost(postEntry.postRepostUri, postEntry.postUri, postEntry.postCid, postEntry.postText,
+                                postEntry.postIndexedDateTime, postEntry.author, postEntry.postEmbeddingDisabled)
                 }
 
-                onLike: root.like(postLikeUri, postUri, postCid)
+                onLike: SkyRoot.root.like(postEntry.postLikeUri, postEntry.postUri, postEntry.postCid)
 
                 onBookmark: {
-                    if (isBookmarked) {
-                        skywalker.bookmarks.removeBookmark(postUri)
+                    if (postEntry.isBookmarked) {
+                        SkyRoot.skywalker().bookmarks.removeBookmark(postEntry.postUri)
                     }
                     else {
-                        const bookmarked = skywalker.bookmarks.addBookmark(postUri)
+                        const bookmarked = SkyRoot.skywalker().bookmarks.addBookmark(postEntry.postUri)
 
                         if (!bookmarked)
-                            skywalker.showStatusMessage(qsTr("Your bookmarks are full!"), QEnums.STATUS_LEVEL_ERROR)
+                            SkyRoot.skywalker().showStatusMessage(qsTr("Your bookmarks are full!"), QEnums.STATUS_LEVEL_ERROR)
                     }
                 }
 
-                onShare: skywalker.sharePost(postUri)
-                onMuteThread: root.muteThread(postIsReply ? postReplyRootUri : postUri, postThreadMuted)
-                onThreadgate: root.gateRestrictions(postThreadgateUri, postIsReply ? postReplyRootUri : postUri, postIsReply ? postReplyRootCid : postCid, postUri, postReplyRestriction, postReplyRestrictionLists, postHiddenReplies)
-                onHideReply: root.hidePostReply(postThreadgateUri, postReplyRootUri, postReplyRootCid, postUri, postReplyRestriction, postReplyRestrictionLists, postHiddenReplies)
-                onDeletePost: confirmDelete()
-                onCopyPostText: skywalker.copyPostTextToClipboard(postPlainText)
-                onReportPost: root.reportPost(postUri, postCid, postText, postIndexedDateTime, author)
-                onTranslatePost: root.translateText(postPlainText)
-                onDetachQuote: (uri, detach) => root.detachQuote(uri, postUri, postCid, detach)
-                onPin: root.pinPost(postUri, postCid)
-                onUnpin: root.unpinPost(postCid)
+                onShare: SkyRoot.skywalker().sharePost(postEntry.postUri)
+                onMuteThread: SkyRoot.root.muteThread(postEntry.postIsReply ? postEntry.postReplyRootUri : postEntry.postUri, postEntry.postThreadMuted)
+                onThreadgate: SkyRoot.root.gateRestrictions(postEntry.postThreadgateUri, postEntry.postIsReply ? postEntry.postReplyRootUri : postEntry.postUri, postEntry.postIsReply ?postEntry. postReplyRootCid : postEntry.postCid, postEntry.postUri, postEntry.postReplyRestriction, postEntry.postReplyRestrictionLists, postEntry.postHiddenReplies)
+                onHideReply: SkyRoot.root.hidePostReply(postEntry.postThreadgateUri, postEntry.postReplyRootUri, postEntry.postReplyRootCid, postEntry.postUri, postEntry.postReplyRestriction, postEntry.postReplyRestrictionLists, postEntry.postHiddenReplies)
+                onDeletePost: postEntry.confirmDelete()
+                onCopyPostText: SkyRoot.skywalker().copyPostTextToClipboard(postEntry.postPlainText)
+                onReportPost: SkyRoot.root.reportPost(postEntry.postUri, postEntry.postCid, postEntry.postText, postEntry.postIndexedDateTime, postEntry.author)
+                onTranslatePost: SkyRoot.root.translateText(postEntry.postPlainText)
+                onDetachQuote: (uri, detach) => SkyRoot.root.detachQuote(uri, postEntry.postUri, postEntry.postCid, detach)
+                onPin: SkyRoot.root.pinPost(postEntry.postUri, postEntry.postCid)
+                onUnpin: SkyRoot.root.unpinPost(postEntry.postCid)
             }
         }
 
@@ -484,7 +485,7 @@ Rectangle {
         Loader {
             Layout.columnSpan: 2
             Layout.fillWidth: true
-            active: postGapId > 0
+            active: postEntry.postGapId > 0
             visible: status == Loader.Ready
             sourceComponent: Text {
                 width: parent.width
@@ -495,7 +496,7 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: getGapPosts()
+                    onClicked: postEntry.getGapPosts()
                 }
             }
         }
@@ -504,7 +505,7 @@ Rectangle {
         Loader {
             Layout.columnSpan: 2
             Layout.fillWidth: true
-            active: postHiddenPosts
+            active: postEntry.postHiddenPosts
             visible: status == Loader.Ready
             sourceComponent: Text {
                 width: parent.width
@@ -515,7 +516,7 @@ Rectangle {
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: showHiddenReplies()
+                    onClicked: postEntry.showHiddenReplies()
                 }
             }
         }
@@ -524,7 +525,7 @@ Rectangle {
         Loader {
             Layout.columnSpan: 2
             Layout.fillWidth: true
-            active: postNotFound || postBlocked || postNotSupported || postLocallyDeleted
+            active: postEntry.postNotFound || postEntry.postBlocked || postEntry.postNotSupported || postEntry.postLocallyDeleted
             visible: status == Loader.Ready
             sourceComponent: Text {
                 width: parent.width
@@ -532,13 +533,13 @@ Rectangle {
                 elide: Text.ElideRight
                 color: guiSettings.textColor
                 text: {
-                    if (postNotFound)
+                    if (postEntry.postNotFound)
                         return qsTr("🗑 Not found")
-                    else if (postBlocked)
+                    else if (postEntry.postBlocked)
                         return qsTr("🚫 Blocked")
-                    else if (postNotSupported)
+                    else if (postEntry.postNotSupported)
                         return qsTr("⚠️ Not supported")
-                    else if (postLocallyDeleted)
+                    else if (postEntry.postLocallyDeleted)
                         return qsTr("🗑 Deleted")
                     else
                         return "⚠️ Error"
@@ -549,7 +550,7 @@ Rectangle {
         Loader {
             Layout.columnSpan: 2
             Layout.fillWidth: true
-            active: postNotSupported
+            active: postEntry.postNotSupported
             visible: status == Loader.Ready
             sourceComponent: Text {
                 width: parent.width
@@ -559,40 +560,40 @@ Rectangle {
                 elide: Text.ElideRight
                 color: Material.color(Material.Grey)
                 font.pointSize: guiSettings.scaledFont(7/8)
-                text: postUnsupportedType
+                text: postEntry.postUnsupportedType
             }
         }
 
         // Instead of using row spacing, these empty rectangles are used for white space.
         // This way we can color the background for threads.
         Rectangle {
-            width: guiSettings.threadColumnWidth
-            height: postEntry.margin
+            Layout.preferredWidth: guiSettings.threadColumnWidth
+            Layout.preferredHeight: postEntry.margin
             color: "transparent"
 
             Rectangle {
                 x: 8 + (avatarImg.width - width) / 2
-                width: threadStyle === QEnums.THREAD_STYLE_BAR ? avatarImg.width : guiSettings.threadLineWidth
+                width: postEntry.threadStyle === QEnums.THREAD_STYLE_BAR ? avatarImg.width : guiSettings.threadLineWidth
                 height: parent.height
                 opacity: avatar.opacity
-                visible: !((postType === QEnums.POST_LAST_REPLY) || (postThreadType & QEnums.THREAD_LEAF))
+                visible: !((postEntry.postType === QEnums.POST_LAST_REPLY) || (postEntry.postThreadType & QEnums.THREAD_LEAF))
 
                 color: {
-                    switch (postType) {
+                    switch (postEntry.postType) {
                     case QEnums.POST_ROOT:
                     case QEnums.POST_REPLY:
-                        return guiSettings.threadMidColor(threadColor)
+                        return guiSettings.threadMidColor(postEntry.threadColor)
                     case QEnums.POST_THREAD: {
-                        if (postThreadType & QEnums.THREAD_ENTRY)  {
-                            return guiSettings.threadEntryColor(threadColor)
+                        if (postEntry.postThreadType & QEnums.THREAD_ENTRY)  {
+                            return guiSettings.threadEntryColor(postEntry.threadColor)
                         }
-                        if (postThreadType & QEnums.THREAD_LEAF) {
+                        if (postEntry.postThreadType & QEnums.THREAD_LEAF) {
                             return guiSettings.backgroundColor
-                        } else if (postThreadType & QEnums.THREAD_PARENT)  {
-                            return guiSettings.threadStartColor(threadColor)
+                        } else if (postEntry.postThreadType & QEnums.THREAD_PARENT)  {
+                            return guiSettings.threadStartColor(postEntry.threadColor)
                         }
 
-                        return guiSettings.threadMidColor(threadColor)
+                        return guiSettings.threadMidColor(postEntry.threadColor)
                     }
                     default:
                         return guiSettings.backgroundColor
@@ -601,26 +602,26 @@ Rectangle {
             }
         }
         Rectangle {
-            width: parent.width - guiSettings.threadColumnWidth - postEntry.margin * 2
-            height: postEntry.margin
+            Layout.preferredWidth: parent.width - guiSettings.threadColumnWidth - postEntry.margin * 2
+            Layout.preferredHeight: postEntry.margin
             color: "transparent"
         }
 
         // Post/Thread separator
         Rectangle {
-            width: parent.width
+            Layout.preferredWidth: parent.width
             Layout.columnSpan: 2
             Layout.preferredHeight: 1
             color: guiSettings.separatorColor
-            visible: [QEnums.POST_STANDALONE, QEnums.POST_LAST_REPLY].includes(postType) ||
-                (postThreadType & QEnums.THREAD_LEAF)
+            visible: [QEnums.POST_STANDALONE, QEnums.POST_LAST_REPLY].includes(postEntry.postType) ||
+                (postEntry.postThreadType & QEnums.THREAD_LEAF)
         }
 
         // End of feed indication
         Loader {
             Layout.columnSpan: 2
             Layout.fillWidth: true
-            active: endOfFeed
+            active: postEntry.endOfFeed
             visible: status == Loader.Ready
             sourceComponent: Text {
                 width: parent.width
@@ -637,8 +638,8 @@ Rectangle {
     MouseArea {
         z: -2 // Let other mouse areas, e.g. images, get on top, -2 to allow records on top
         anchors.fill: parent
-        enabled: !(postThreadType & QEnums.THREAD_ENTRY) && !postBookmarkNotFound
-        onClicked: openPostThread()
+        enabled: !(postEntry.postThreadType & QEnums.THREAD_ENTRY) && !postEntry.postBookmarkNotFound
+        onClicked: postEntry.openPostThread()
     }
 
     UnicodeFonts {
@@ -664,13 +665,13 @@ Rectangle {
         if (!(postThreadType & QEnums.THREAD_ENTRY) && !postBookmarkNotFound)
         {
             if (postUri)
-                skywalker.getPostThread(postUri)
+                SkyRoot.skywalker().getPostThread(postUri)
         }
     }
 
     function getGapPosts() {
-        if (!skywalker.getTimelineInProgress)
-            skywalker.getTimelineForGap(postGapId, 3, true)
+        if (!SkyRoot.skywalker().getTimelineInProgress)
+            SkyRoot.skywalker().getTimelineForGap(postGapId, 3, true)
     }
 
     function performAccessiblePressAction() {
@@ -719,7 +720,7 @@ Rectangle {
     }
 
     function isUserDid(did) {
-        return skywalker.getUserDid() === did
+        return SkyRoot.skywalker().getUserDid() === did
     }
 
     function isUser(author) {
