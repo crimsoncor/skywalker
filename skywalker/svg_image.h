@@ -13,6 +13,7 @@ class SvgImage : public QObject
     Q_PROPERTY(int width MEMBER mWidth CONSTANT FINAL)
     Q_PROPERTY(int height MEMBER mHeight CONSTANT FINAL)
     QML_ELEMENT
+    QML_UNCREATABLE("only created on the C++ side")
 
 public:
     explicit SvgImage(QObject* parent = nullptr) : QObject(parent) {}

@@ -1,7 +1,6 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Layouts
-import QtQuick.VirtualKeyboard
 import skywalker
 
 Rectangle {
@@ -12,7 +11,6 @@ Rectangle {
 
     signal back
     signal searchTextChanged(string text)
-    signal keyRelease(var event)
     signal search(string text)
 
     id: headerRect
@@ -37,13 +35,12 @@ Rectangle {
         Rectangle {
             radius: 5
             Layout.fillWidth: true
-            height: searchText.height
+            Layout.preferredHeight: searchText.height
             color: guiSettings.backgroundColor
 
             TextInput {
                 id: searchText
-                EnterKeyAction.actionId: EnterKeyAction.Search
-                // TODO in Qt6.8 EnterKey.type: Qt.EnterKeySearch
+                EnterKey.type: Qt.EnterKeySearch
                 width: parent.width
                 clip: true
                 padding: 5
@@ -55,17 +52,20 @@ Rectangle {
                 focus: true
 
                 onDisplayTextChanged: {
-                    if (displayText !== prevDisplayText) {
-                        prevDisplayText = displayText
+                    if (displayText !== headerRect.prevDisplayText) {
+                        headerRect.prevDisplayText = displayText
                         headerRect.searchTextChanged(displayText)
                     }
                 }
 
-                // Does not work with Android
-                Keys.onReleased: (event) => { headerRect.keyRelease(event) }
+                // Does not work with Android (works since Qt6.8)
+                Keys.onReleased: (event) => {
+                    if (event.key === Qt.Key_Return)
+                        headerRect.search(searchText.displayText)
+                }
 
                 Accessible.role: Accessible.EditableText
-                Accessible.name: placeHolder.visible ? placeHolderText : text
+                Accessible.name: placeHolder.visible ? headerRect.placeHolderText : text
                 Accessible.editable: true
                 Accessible.searchEdit: true
 
@@ -99,16 +99,17 @@ Rectangle {
         // WORKAROUND for Android
         // Qt does not catch the signal of the ENTER key from the Android
         // keyboard, nor can it set the icon to a search icon.
-        SvgButton {
-            id: searchButton
-            iconColor: enabled ? guiSettings.headerTextColor : guiSettings.disabledColor
-            Material.background: enabled ? guiSettings.buttonColor : guiSettings.headerColor
-            svg: SvgOutline.search
-            accessibleName: qsTr("start search for posts and users")
-            onClicked: headerRect.search(searchText.displayText)
-            enabled: searchText.displayText.length >= headerRect.minSearchTextLength
-            visible: headerRect.showSearchButton
-        }
+        // Since Qt6.8 it seems to work! TODO: remove button
+        // SvgButton {
+        //     id: searchButton
+        //     iconColor: enabled ? guiSettings.headerTextColor : guiSettings.disabledColor
+        //     Material.background: enabled ? guiSettings.buttonColor : guiSettings.headerColor
+        //     svg: SvgOutline.search
+        //     accessibleName: qsTr("start search for posts and users")
+        //     onClicked: headerRect.search(searchText.displayText)
+        //     enabled: searchText.displayText.length >= headerRect.minSearchTextLength
+        //     visible: headerRect.showSearchButton
+        // }
     }
 
     GuiSettings {

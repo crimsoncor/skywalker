@@ -1,11 +1,13 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 import skywalker
 import atproto
 
 SkyPage {
-    required property var skywalker
+    required property Skywalker skywalker
     property var timeline
     property bool isTyping: true
     property bool isHashtagSearch: false
@@ -35,12 +37,12 @@ SkyPage {
 
     header: SearchHeader {
         minSearchTextLength: 0
-        placeHolderText: isPostSearch ? qsTr("Search posts") : qsTr("Search users")
+        placeHolderText: page.isPostSearch ? qsTr("Search posts") : qsTr("Search users")
         onBack: page.closed()
 
         onSearchTextChanged: (text) => {
             page.isTyping = true
-            currentText = text
+            page.currentText = text
 
             if (text.length > 0) {
                 if (unicodeFonts.isHashtag(text)) {
@@ -61,13 +63,7 @@ SkyPage {
             }
         }
 
-        onKeyRelease: (event) => {
-            if (event.key === Qt.Key_Return) {
-                searchUtils.search(getDisplayText())
-            }
-        }
-
-        onSearch: (text) => { searchUtils.search(text) }
+        onSearch: (text) => searchUtils.search(text)
     }
 
     footer: SkyFooter {
@@ -122,8 +118,8 @@ SkyPage {
         Material.background: "transparent"
         svg: SvgOutline.block
         accessibleName: qsTr(`mute hashtag ${page.getSearchText()}`)
-        visible: isHashtagSearch
-        onClicked: muteWord(page.getSearchText())
+        visible: page.isHashtagSearch
+        onClicked: page.muteWord(page.getSearchText())
     }
 
     SvgButton {
@@ -138,8 +134,8 @@ SkyPage {
         Material.background: "transparent"
         svg: SvgOutline.hashtag
         accessibleName: qsTr(`set focus on hashtag ${page.getSearchText()}`)
-        visible: isHashtagSearch
-        onClicked: focusHashtag(page.getSearchText())
+        visible: page.isHashtagSearch
+        onClicked: page.focusHashtag(page.getSearchText())
     }
 
     Rectangle {
@@ -240,11 +236,11 @@ SkyPage {
         anchors.top: searchModeSeparator.bottom
         anchors.bottom: parent.bottom
         width: parent.width
-        currentIndex: currentText ? searchBar.currentIndex :
+        currentIndex: page.currentText ? searchBar.currentIndex :
                                     ((page.header.hasFocus() || recentSearchesView.keepFocus) ?
                                          recentSearchesView.StackLayout.index :
                                          suggestedUsersView.StackLayout.index)
-        visible: !page.isTyping || !currentText
+        visible: !page.isTyping || !page.currentText
 
         onCurrentIndexChanged: {
             if (currentIndex === recentSearchesView.StackLayout.index)
@@ -253,8 +249,8 @@ SkyPage {
 
         SkyListView {
             id: postsViewTop
-            width: parent.width
-            height: parent.height
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: parent.height
             model: searchUtils.getSearchPostFeedModel(SearchSortOrder.TOP)
             pixelAligned: guiSettings.flickPixelAligned
 
@@ -288,8 +284,8 @@ SkyPage {
 
         SkyListView {
             id: postsViewLatest
-            width: parent.width
-            height: parent.height
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: parent.height
             model: searchUtils.getSearchPostFeedModel(SearchSortOrder.LATEST)
 
             delegate: PostFeedViewDelegate {
@@ -322,8 +318,8 @@ SkyPage {
 
         ListView {
             id: usersView
-            width: parent.width
-            height: parent.height
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: parent.height
             spacing: 0
             clip: true
             model: searchUtils.getSearchUsersModel()
@@ -342,7 +338,7 @@ SkyPage {
 
             FlickableRefresher {
                 inProgress: searchUtils.searchActorsInProgress
-                bottomOvershootFun: () => searchUtils.getNextPageSearchActors(header.getDisplayText())
+                bottomOvershootFun: () => searchUtils.getNextPageSearchActors(page.header.getDisplayText())
             }
 
             EmptyListIndication {
@@ -359,8 +355,8 @@ SkyPage {
 
         ListView {
             id: suggestedUsersView
-            width: parent.width
-            height: parent.height
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: parent.height
             spacing: 0
             clip: true
             model: searchUtils.getSearchSuggestedUsersModel()
@@ -409,8 +405,8 @@ SkyPage {
             property bool keepFocus: false
 
             id: recentSearchesView
-            width: parent.width
-            height: parent.height
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: parent.height
             spacing: 0
             clip: true
             flickDeceleration: guiSettings.flickDeceleration
@@ -446,6 +442,7 @@ SkyPage {
             delegate: Rectangle {
                 required property string modelData
 
+                id: recentItem
                 width: recentSearchesView.width
                 height: Math.max(recentSearchIcon.height, recentSearchText.height)
                 color: "transparent"
@@ -467,13 +464,13 @@ SkyPage {
                     anchors.leftMargin: 10
                     anchors.rightMargin: page.margin
                     elide: Text.ElideRight
-                    text: modelData
+                    text: recentItem.modelData
                 }
 
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        header.setSearchText(recentSearchText.text)
+                        page.header.setSearchText(recentSearchText.text)
                         searchUtils.search(recentSearchText.text)
                     }
                 }

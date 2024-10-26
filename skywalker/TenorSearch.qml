@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -23,7 +24,7 @@ SkyPage {
                 page.closed()
         }
 
-        onSearch: (text) => searchTenor(text)
+        onSearch: (text) => page.searchTenor(text)
     }
 
     footer: Rectangle {
@@ -48,8 +49,8 @@ SkyPage {
         // Categories
         GridView {
             id: categoriesView
-            width: parent.width
-            height: parent.height
+            Layout.preferredWidth: parent.width
+            Layout.preferredHeight: parent.height
             cellWidth: width / 2
             cellHeight: 140
             model: []
@@ -70,17 +71,17 @@ SkyPage {
                 color: "transparent"
 
                 AnimatedImage {
-                    x: index & 1 ? 2 : 0
+                    x: categoryEntry.index & 1 ? 2 : 0
                     width: parent.width - 2
                     height: parent.height - 4
                     fillMode: Image.PreserveAspectCrop
-                    source: category.gifUrl
+                    source: categoryEntry.category.gifUrl
 
                     onWidthChanged: imgLabel.adjustWidth()
 
                     Accessible.role: Accessible.Button
-                    Accessible.name: qsTr(`GIF category: ${category.searchTerm}`)
-                    Accessible.onPressAction: searchCategory(category)
+                    Accessible.name: qsTr(`GIF category: ${categoryEntry.category.searchTerm}`)
+                    Accessible.onPressAction: page.searchCategory(categoryEntry.category)
 
                     Label {
                         id: imgLabel
@@ -92,7 +93,7 @@ SkyPage {
                         font.bold: true
                         font.pointSize: guiSettings.scaledFont(9/8)
                         color: "white"
-                        text: category.searchTerm
+                        text: categoryEntry.category.searchTerm
 
                         onWidthChanged: adjustWidth()
 
@@ -106,7 +107,7 @@ SkyPage {
 
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: searchCategory(category)
+                        onClicked: page.searchCategory(categoryEntry.category)
                     }
                 }
             }
@@ -117,7 +118,7 @@ SkyPage {
         // GIFs
         ListView {
             id: gifOverview
-            width: parent.width
+            Layout.preferredWidth: parent.width
             model: tenor.overviewModel
             spacing: tenor.spacing
             clip: true
@@ -129,15 +130,16 @@ SkyPage {
                 required property list<tenorgif> previewRow
                 required property int previewRowSpacing
 
+                id: gifOverviewRow
                 spacing: previewRowSpacing
                 width: gifOverview.width
 
                 Repeater {
-                    model: previewRow.length
+                    model: gifOverviewRow.previewRow.length
 
                     AnimatedImage {
                         required property int index
-                        property tenorgif gif: previewRow[index]
+                        property tenorgif gif: gifOverviewRow.previewRow[index]
 
                         id: gifDisplay
                         width: gif.overviewSize.width
@@ -147,13 +149,13 @@ SkyPage {
 
                         Accessible.role: Accessible.Button
                         Accessible.name: `GIF: ${gif.description}`
-                        Accessible.onPressAction: selected(gif)
+                        Accessible.onPressAction: page.selected(gif)
 
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                tenor.addRecentGif(gif)
-                                selected(gif)
+                                tenor.addRecentGif(gifDisplay.gif)
+                                page.selected(gifDisplay.gif)
                             }
                         }
                     }
@@ -181,7 +183,7 @@ SkyPage {
 
     Tenor {
         id: tenor
-        width: parent.width
+        width: page.width
         spacing: 4
         skywalker: root.getSkywalker()
 
