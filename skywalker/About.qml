@@ -3,6 +3,7 @@ import QtQuick
 SkyPage {
     signal closed()
 
+    id: page
     width: parent.width
     height: parent.height
     background: Rectangle { color: guiSettings.skywalkerLogoColor }
@@ -27,7 +28,7 @@ SkyPage {
             anchors.horizontalCenter: parent.horizontalCenter
             padding: 10
             color: "white"
-            text: qsTr("Version") + ": " + skywalker.VERSION
+            text: qsTr("Version") + ": " + SkyRoot.skywalker().VERSION
         }
         AccessibleText {
             id: author
@@ -42,11 +43,11 @@ SkyPage {
             padding: 10
             textFormat: Text.RichText
             text: `<a href=\"did:plc:zzmeflm2wzrrgcaam6bw3kaf\" style=\"color: ivory; text-decoration: none\">${guiSettings.skywalkerHandle}</a>`
-            onLinkActivated: (link) => skywalker.getDetailedProfile(link)
+            onLinkActivated: (link) => SkyRoot.skywalker().getDetailedProfile(link)
 
             Accessible.role: Accessible.Link
             Accessible.name: `${guiSettings.skywalkerHandle}`
-            Accessible.onPressAction: skywalker.getDetailedProfile("did:plc:zzmeflm2wzrrgcaam6bw3kaf")
+            Accessible.onPressAction: SkyRoot.skywalker().getDetailedProfile("did:plc:zzmeflm2wzrrgcaam6bw3kaf")
         }
         Image {
             anchors.horizontalCenter: parent.horizontalCenter
@@ -70,7 +71,7 @@ SkyPage {
             id: okButton
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("OK")
-            onClicked: closed()
+            onClicked: page.closed()
         }
         Rectangle {
             id: whitespace

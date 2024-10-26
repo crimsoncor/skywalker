@@ -12,7 +12,7 @@ include(FetchContent)
 find_package(Qt6 REQUIRED COMPONENTS Core Quick QuickControls2 Multimedia)
 
 qt_standard_project_setup()
-# qt_policy(SET QTP0004 NEW)
+qt_policy(SET QTP0004 NEW)
 
 add_compile_definitions(APP_VERSION="${APP_VERSION}")
 add_compile_definitions(TENOR_API_KEY="$ENV{TENOR_API_KEY}")

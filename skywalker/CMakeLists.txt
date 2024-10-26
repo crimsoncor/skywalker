@@ -23,6 +23,9 @@ endif()
 include_directories(..)
 #qt_add_library(libskywalker)
 
+set_source_files_properties(SkyRoot.qml
+    PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
 qt_add_qml_module(libskywalker
     URI skywalker
     VERSION ${PROJECT_VERSION}
@@ -423,6 +426,7 @@ qt_add_qml_module(libskywalker
         SOURCES gif_to_video_converter.cpp
         QML_FILES ProgressDialog.qml
         QML_FILES ConvertGifDialog.qml
+        QML_FILES SkyRoot.qml
 )
 
 if (NOT ANDROID)

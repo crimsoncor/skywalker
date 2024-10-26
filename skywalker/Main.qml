@@ -1678,6 +1678,8 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
+        SkyRoot.root = root
+
         console.debug("DPR:", Screen.devicePixelRatio)
         console.debug("Font pt:", Qt.application.font.pointSize)
         console.debug("Font px:", Qt.application.font.pixelSize)
