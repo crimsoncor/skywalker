@@ -1,8 +1,7 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import QtQuick.Window 2.2
-import QtMultimedia
 import skywalker
 
 SkyPage {
@@ -104,9 +103,9 @@ SkyPage {
             anchors.centerIn: parent
             height: parent.height - 10
             width: height
-            author: skywalker.user
-            onClicked: skywalker.showStatusMessage(qsTr("Yes, you're gorgeous!"), QEnums.STATUS_LEVEL_INFO)
-            onPressAndHold: skywalker.showStatusMessage(qsTr("Yes, you're really gorgeous!"), QEnums.STATUS_LEVEL_INFO)
+            author: SkyRoot.skywalker().user
+            onClicked: SkyRoot.skywalker().showStatusMessage(qsTr("Yes, you're gorgeous!"), QEnums.STATUS_LEVEL_INFO)
+            onPressAndHold: SkyRoot.skywalker().showStatusMessage(qsTr("Yes, you're really gorgeous!"), QEnums.STATUS_LEVEL_INFO)
 
             Accessible.role: Accessible.Button
             Accessible.name: qsTr("your avatar")
@@ -119,23 +118,23 @@ SkyPage {
             id: postButton
             anchors.right: moreOptions.left
             anchors.verticalCenter: parent.verticalCenter
-            text: replyToPostUri ? qsTr("Reply", "verb on post composition") : qsTr("Post", "verb on post composition")
-            enabled: !isPosting && postsAreValid() && hasFullContent() && checkAltText()
+            text: page.replyToPostUri ? qsTr("Reply", "verb on post composition") : qsTr("Post", "verb on post composition")
+            enabled: !isPosting && page.postsAreValid() && page.hasFullContent() && page.checkAltText()
             onClicked: sendPost()
-            Accessible.name: replyToPostUri ? qsTr("send reply") : qsTr("send post")
+            Accessible.name: page.replyToPostUri ? qsTr("send reply") : qsTr("send post")
 
             function sendPost() {
                 postButton.isPosting = true
                 threadPosts.copyPostItemsToPostList()
 
                 if (threadPosts.count === 1) {
-                    sendSinglePost(threadPosts.postList[0],
-                                   replyToPostUri, replyToPostCid,
-                                   replyRootPostUri, replyRootPostCid, 0, 1)
+                    page.sendSinglePost(threadPosts.postList[0],
+                                   page.replyToPostUri, page.replyToPostCid,
+                                   page.replyRootPostUri, page.replyRootPostCid, 0, 1)
                 }
                 else {
-                    sendThreadPosts(0, replyToPostUri, replyToPostCid,
-                                    replyRootPostUri, replyRootPostCid)
+                    page.sendThreadPosts(0, page.replyToPostUri, page.replyToPostCid,
+                                    page.replyRootPostUri, page.replyRootPostCid)
                 }
             }
         }
@@ -153,8 +152,8 @@ SkyPage {
                 width: Math.max(altItem.width, numberPrefixItem.width)
                 modal: true
 
-                onAboutToShow: root.enablePopupShield(true)
-                onAboutToHide: root.enablePopupShield(false)
+                onAboutToShow: SkyRoot.root.enablePopupShield(true)
+                onAboutToHide: SkyRoot.root.enablePopupShield(false)
 
                 CloseMenuItem {
                     text: qsTr("<b>Options</b>")
@@ -164,41 +163,41 @@ SkyPage {
                     id: altItem
                     text: qsTr("Require ALT text")
                     checkable: true
-                    checked: skywalker.getUserSettings().getRequireAltText(userDid)
+                    checked: SkyRoot.skywalker().getUserSettings().getRequireAltText(page.userDid)
 
                     onToggled:{
-                        requireAltText = checked
-                        skywalker.getUserSettings().setRequireAltText(userDid, checked)
+                        page.requireAltText = checked
+                        SkyRoot.skywalker().getUserSettings().setRequireAltText(page.userDid, checked)
                     }
                 }
                 AccessibleMenuItem {
                     id: autoNumberItem
                     text: qsTr("Auto number")
                     checkable: true
-                    checked: skywalker.getUserSettings().getThreadAutoNumber()
+                    checked: SkyRoot.skywalker().getUserSettings().getThreadAutoNumber()
 
                     onToggled: {
-                        threadAutoNumber = checked
-                        skywalker.getUserSettings().setThreadAutoNumber(checked)
+                        page.threadAutoNumber = checked
+                        SkyRoot.skywalker().getUserSettings().setThreadAutoNumber(checked)
                     }
                 }
                 AccessibleMenuItem {
                     id: numberPrefixItem
                     contentItem: AccessibleText {
                         textFormat: Text.RichText
-                        text: qsTr(`Number prefix: ${(threadPrefix ? unicodeFonts.toCleanedHtml(threadPrefix) : qsTr("<i>&lt;none&gt;</i>"))}`)
+                        text: qsTr(`Number prefix: ${(page.threadPrefix ? unicodeFonts.toCleanedHtml(page.threadPrefix) : qsTr("<i>&lt;none&gt;</i>"))}`)
                     }
                     enabled: autoNumberItem.checked
-                    onTriggered: editThreadPrefix()
+                    onTriggered: page.editThreadPrefix()
                 }
                 AccessibleMenuItem {
                     text: qsTr("Auto split")
                     checkable: true
-                    checked: skywalker.getUserSettings().getThreadAutoSplit()
+                    checked: SkyRoot.skywalker().getUserSettings().getThreadAutoSplit()
 
                     onToggled: {
-                        threadAutoSplit = checked
-                        skywalker.getUserSettings().setThreadAutoSplit(checked)
+                        page.threadAutoSplit = checked
+                        SkyRoot.skywalker.getUserSettings().setThreadAutoSplit(checked)
                     }
                 }
                 AccessibleMenuItem {
@@ -227,7 +226,7 @@ SkyPage {
         boundsBehavior: Flickable.StopAtBounds
 
         onHeightChanged: {
-            let postItem = currentPostItem()
+            let postItem = page.currentPostItem()
 
             if (!postItem)
                 return
@@ -250,11 +249,11 @@ SkyPage {
             y: 10
             width: parent.width - 2 * page.margin
             anchors.horizontalCenter: parent.horizontalCenter
-            author: replyToAuthor
-            postText: replyToPostText
-            postDateTime: replyToPostDateTime
+            author: page.replyToAuthor
+            postText: page.replyToPostText
+            postDateTime: page.replyToPostDateTime
             ellipsisBackgroundColor: guiSettings.postHighLightColor
-            visible: replyToPostUri
+            visible: page.replyToPostUri
         }
 
         Column {
@@ -265,17 +264,17 @@ SkyPage {
             Repeater {
                 property list<ComposePostItem> postList: [
                     ComposePostItem {
-                        text: initialText ? initialText : ""
-                        images: initialImage ? [initialImage] : []
-                        altTexts: initialImage ? [""] : []
-                        memeTopTexts: initialImage ? [""] : []
-                        memeBottomTexts: initialImage ? [""] : []
+                        text: page.initialText ? page.initialText : ""
+                        images: page.initialImage ? [page.initialImage] : []
+                        altTexts: page.initialImage ? [""] : []
+                        memeTopTexts: page.initialImage ? [""] : []
+                        memeBottomTexts: page.initialImage ? [""] : []
                         quoteAuthor: page.quoteAuthor
                         quoteUri: page.quoteUri
                         quoteCid: page.quoteCid
                         quoteText: page.quoteText
                         quoteDateTime: page.quoteDateTime
-                        language: replyToLanguage ? replyToLanguage : languageUtils.defaultPostLanguage
+                        language: page.replyToLanguage ? page.replyToLanguage : languageUtils.defaultPostLanguage
                         video: ""
                         videoAltText: ""
                     }
@@ -422,11 +421,11 @@ SkyPage {
                     id: postItem
                     width: parent.width
                     height: calcHeight()
-                    opacity: index === currentPostIndex ? 1.0 : 0.6
+                    opacity: index === page.currentPostIndex ? 1.0 : 0.6
 
                     SeparatorLine {
                         id: separatorLine
-                        visible: index > 0
+                        visible: postItem.index > 0
                     }
 
                     SkyFormattedTextEdit {
@@ -441,7 +440,7 @@ SkyPage {
                         bottomPadding: 0
                         parentPage: page
                         parentFlick: flick
-                        placeholderText: index === 0 ? qsTr("Say something nice") : qsTr(`Add post ${(index + 1)}`)
+                        placeholderText: postItem.index === 0 ? qsTr("Say something nice") : qsTr(`Add post ${(postItem.index + 1)}`)
                         initialText: postItem.text
                         maxLength: page.maxPostLength - postCountText.size()
                         fontSelectorCombo: fontSelector
@@ -449,38 +448,38 @@ SkyPage {
                         onTextChanged: {
                             postItem.text = text
 
-                            if (threadAutoSplit && graphemeLength > maxLength && !splitting) {
-                                console.debug("SPLIT:", index)
+                            if (page.threadAutoSplit && graphemeLength > maxLength && !splitting) {
+                                console.debug("SPLIT:", postItem.index)
 
                                 // Avoid to re-split when the post count text becomes visible or longer
                                 const maxPartLength = page.maxPostLength - postCountText.maxSize()
-                                const parts = unicodeFonts.splitText(text, maxPartLength, minPostSplitLineLength, 2)
+                                const parts = unicodeFonts.splitText(text, maxPartLength, page.minPostSplitLineLength, 2)
 
                                 if (parts.length > 1) {
-                                    const moveCursor = cursorPosition > parts[0].length && index === currentPostIndex
+                                    const moveCursor = cursorPosition > parts[0].length && postItem.index === page.currentPostIndex
                                     const oldCursorPosition = cursorPosition
 
                                     splitting = true
                                     text = parts[0].trim()
 
-                                    if (!moveCursor && index === currentPostIndex)
+                                    if (!moveCursor && postItem.index === page.currentPostIndex)
                                         cursorPosition = oldCursorPosition
 
                                     splitting = false
 
-                                    if (index === threadPosts.count - 1 || threadPosts.itemAt(index + 1).hasAttachment()) {
-                                        threadPosts.addPost(index, parts[1], moveCursor)
+                                    if (postItem.index === threadPosts.count - 1 || threadPosts.itemAt(postItem.index + 1).hasAttachment()) {
+                                        threadPosts.addPost(postItem.index, parts[1], moveCursor)
                                     }
                                     else {
                                         // Prepend excess text to next post
-                                        let nextPostText = threadPosts.itemAt(index + 1).getPostText()
+                                        let nextPostText = threadPosts.itemAt(postItem.index + 1).getPostText()
                                         const newText = joinPosts(parts[1], nextPostText.text)
                                         const newCursorPosition = moveCursor ? oldCursorPosition - parts[0].length : -1
 
-                                        setPostTextTimer.startSetText(newText, index + 1, newCursorPosition)
+                                        setPostTextTimer.startSetText(newText, postItem.index + 1, newCursorPosition)
 
                                         if (moveCursor)
-                                            currentPostIndex = index + 1
+                                            currentPostIndex = postItem.index + 1
                                     }
                                 }
                             }
@@ -488,7 +487,7 @@ SkyPage {
 
                         onFocusChanged: {
                             if (focus)
-                                currentPostIndex = index
+                                page.currentPostIndex = postItem.index
                         }
 
                         onFirstWebLinkChanged: {
@@ -516,34 +515,34 @@ SkyPage {
                         }
 
                         onFirstPostLinkChanged: {
-                            if (page.openedAsQuotePost && index === 0)
+                            if (page.openedAsQuotePost && postItem.index === 0)
                                 return
 
-                            if (quoteFixed)
+                            if (postItem.quoteFixed)
                                 return
 
-                            quoteList = page.nullList
-                            quoteFeed = page.nullFeed
-                            quoteUri = ""
+                            postItem.quoteList = page.nullList
+                            postItem.quoteFeed = page.nullFeed
+                            page.quoteUri = ""
 
                             if (firstPostLink)
                                 postUtils.getQuotePost(firstPostLink)
                         }
 
                         onCursorInFirstPostLinkChanged: {
-                            if (!cursorInFirstPostLink && quoteUri)
-                                fixQuoteLink(true)
+                            if (!cursorInFirstPostLink && page.quoteUri)
+                                postItem.fixQuoteLink(true)
                         }
 
                         onFirstFeedLinkChanged: {
-                            if (page.openedAsQuotePost && index === 0)
+                            if (page.openedAsQuotePost && postItem.index === 0)
                                 return
 
-                            if (quoteFixed)
+                            if (postItem.quoteFixed)
                                 return
 
-                            quoteList = page.nullList
-                            quoteFeed = page.nullFeed
+                            postItem.quoteList = page.nullList
+                            postItem.quoteFeed = page.nullFeed
 
                             if (firstPostLink)
                                 return
@@ -553,18 +552,18 @@ SkyPage {
                         }
 
                         onCursorInFirstFeedLinkChanged: {
-                            if (!cursorInFirstFeedLink && !quoteFeed.isNull())
-                                fixQuoteLink(true)
+                            if (!cursorInFirstFeedLink && !postItem.quoteFeed.isNull())
+                                postItem.fixQuoteLink(true)
                         }
 
                         onFirstListLinkChanged: {
-                            if (page.openedAsQuotePost && index === 0)
+                            if (page.openedAsQuotePost && postItem.index === 0)
                                 return
 
-                            if (quoteFixed)
+                            if (postItem.quoteFixed)
                                 return
 
-                            quoteList = page.nullList
+                            postItem.quoteList = page.nullList
 
                             if (firstPostLink || firstFeedLink)
                                 return
@@ -574,8 +573,8 @@ SkyPage {
                         }
 
                         onCursorInFirstListLinkChanged: {
-                            if (!cursorInFirstListLink && !quoteList.isNull())
-                                fixQuoteLink(true)
+                            if (!cursorInFirstListLink && !postItem.quoteList.isNull())
+                                postItem.fixQuoteLink(true)
                         }
                     }
 
@@ -587,9 +586,9 @@ SkyPage {
                         height: width
                         svg: SvgOutline.remove
                         accessibleName: qsTr("remove post")
-                        visible: !postItem.hasContent() && threadPosts.count > 1 && (index > 0 || !replyToPostUri)
+                        visible: !postItem.hasContent() && threadPosts.count > 1 && (postItem.index > 0 || !page.replyToPostUri)
 
-                        onClicked: threadPosts.removePost(index)
+                        onClicked: threadPosts.removePost(postItem.index)
                     }
 
                     AccessibleText {
@@ -599,8 +598,8 @@ SkyPage {
                         rightPadding: page.margin
                         anchors.top: postText.bottom
                         textFormat: Text.RichText
-                        text: getPostCountText(index, threadPosts.count)
-                        visible: threadPosts.count > 1 && threadAutoNumber
+                        text: page.getPostCountText(postItem.index, threadPosts.count)
+                        visible: threadPosts.count > 1 && page.threadAutoNumber
 
                         function size() {
                             // +1 for newline
@@ -608,7 +607,7 @@ SkyPage {
                         }
 
                         function maxSize() {
-                            if (!threadAutoNumber)
+                            if (!page.threadAutoNumber)
                                 return 0
 
                             const countText = getPostCountText(page.maxThreadPosts, page.maxThreadPosts)
@@ -651,7 +650,7 @@ SkyPage {
                         requireAltText: page.requireAltText
                         visible: Boolean(video) && !linkCard.visible && !linkCard.visible
 
-                        onEdit: editVideo(video, startMs, endMs, newHeight)
+                        onEdit: page.editVideo(video, startMs, endMs, newHeight)
                     }
 
                     // GIF attachment
@@ -667,7 +666,7 @@ SkyPage {
                         source: !gif.isNull() ? gif.smallUrl : ""
                         visible: !gif.isNull()
 
-                        onGifChanged: threadPosts.postList[index].gif = gif
+                        onGifChanged: threadPosts.postList[postItem.index].gif = gif
 
                         Accessible.role: Accessible.StaticText
                         Accessible.name: qsTr("GIF image")
@@ -678,7 +677,7 @@ SkyPage {
                         }
 
                         function hide() {
-                            gifAttachment.gif = nullGif
+                            gifAttachment.gif = page.nullGif
                         }
 
                         SvgButton {
@@ -710,7 +709,7 @@ SkyPage {
                         contentWarning: ""
                         visible: card
 
-                        onCardChanged: threadPosts.postList[index].card = card
+                        onCardChanged: threadPosts.postList[postItem.index].card = card
 
                         Accessible.role: Accessible.StaticText
                         Accessible.name: getSpeech()
@@ -959,7 +958,7 @@ SkyPage {
                 }
 
                 function moveFocusToCurrent() {
-                    let postText = currentPostItem().getPostText()
+                    let postText = page.currentPostItem().getPostText()
                     postText.cursorPosition = postText.text.length
                     focusTimer.start()
                 }
@@ -977,11 +976,11 @@ SkyPage {
             gradient: Gradient {
                 GradientStop {
                     position: 0.0
-                    color: guiSettings.threadStartColor(skywalker.getUserSettings().threadColor)
+                    color: guiSettings.threadStartColor(SkyRoot.skywalker().getUserSettings().threadColor)
                 }
                 GradientStop {
                     position: 1.0
-                    color: guiSettings.threadMidColor(skywalker.getUserSettings().threadColor)
+                    color: guiSettings.threadMidColor(SkyRoot.skywalker().getUserSettings().threadColor)
                 }
             }
         }
@@ -993,12 +992,12 @@ SkyPage {
         font.pointSize: guiSettings.scaledFont(9/8)
         textFormat: Text.RichText
         text: qsTr(`<a href=\"drafts\" style=\"color: ${guiSettings.linkColor}\">Drafts</a>`)
-        visible: threadPosts.count === 1 && !hasFullContent() && !replyToPostUri && !openedAsQuotePost && draftPosts.hasDrafts
-        onLinkActivated: showDraftPosts()
+        visible: threadPosts.count === 1 && !page.hasFullContent() && !page.replyToPostUri && !page.openedAsQuotePost && draftPosts.hasDrafts
+        onLinkActivated: page.showDraftPosts()
 
         Accessible.role: Accessible.Link
         Accessible.name: unicodeFonts.toPlainText(text)
-        Accessible.onPressAction: showDraftPosts()
+        Accessible.onPressAction: page.showDraftPosts()
     }
 
     Text {
@@ -1008,12 +1007,12 @@ SkyPage {
         font.pointSize: guiSettings.scaledFont(9/8)
         textFormat: Text.RichText
         text: qsTr(`<a href=\"card\" style=\"color: ${guiSettings.linkColor}\">Add anniversary card</a>`)
-        visible: isAnniversary && threadPosts.count === 1 && !hasFullContent() && !replyToPostUri && !openedAsQuotePost
-        onLinkActivated: addAnniversaryCard()
+        visible: page.isAnniversary && threadPosts.count === 1 && !page.hasFullContent() && !page.replyToPostUri && !page.openedAsQuotePost
+        onLinkActivated: page.addAnniversaryCard()
 
         Accessible.role: Accessible.Link
         Accessible.name: unicodeFonts.toPlainText(text)
-        Accessible.onPressAction: addAnniversaryCard()
+        Accessible.onPressAction: page.addAnniversaryCard()
     }
 
     footer: Rectangle {
@@ -1024,24 +1023,24 @@ SkyPage {
         color: guiSettings.footerColor
 
         function getFooterHeight() {
-            return guiSettings.footerHeight + (replyToPostUri ? 0 : restrictionRow.height + footerSeparator.height)
+            return guiSettings.footerHeight + (page.replyToPostUri ? 0 : restrictionRow.height + footerSeparator.height)
         }
 
         Rectangle {
             id: footerSeparator
             width: parent.width
-            height: replyToPostUri ? 0 : 1
+            height: page.replyToPostUri ? 0 : 1
             color: guiSettings.separatorColor
-            visible: !replyToPostUri
+            visible: !page.replyToPostUri
         }
 
         Rectangle {
             id: restrictionRow
             anchors.top: footerSeparator.top
             width: parent.width
-            height: replyToPostUri ? 0 : restrictionText.height + 10
+            height: page.replyToPostUri ? 0 : restrictionText.height + 10
             color: "transparent"
-            visible: !replyToPostUri
+            visible: !page.replyToPostUri
 
             Accessible.role: Accessible.Link
             Accessible.name: getRestrictionsSpeech()
@@ -1059,7 +1058,7 @@ SkyPage {
                 width: 20
                 height: 20
                 color: guiSettings.linkColor
-                svg: restrictReply ? SvgOutline.replyRestrictions : SvgOutline.noReplyRestrictions
+                svg: page.restrictReply ? SvgOutline.replyRestrictions : SvgOutline.noReplyRestrictions
 
                 Accessible.ignored: true
             }
@@ -1080,14 +1079,14 @@ SkyPage {
                 function getRestrictionText() {
                     const replyRestricionText = getReplyRestrictionText()
 
-                    if (allowQuoting)
+                    if (page.allowQuoting)
                         return replyRestricionText + " " + qsTr("Quoting allowed.")
 
                     return replyRestricionText + " " + qsTr("Quoting disabled.")
                 }
 
                 function getReplyRestrictionText() {
-                    if (!restrictReply)
+                    if (!page.restrictReply)
                         return qsTr("Everyone can reply.")
 
                     let restrictionList = []
@@ -1134,7 +1133,7 @@ SkyPage {
 
         TextLengthBar {
             anchors.top: restrictionRow.bottom
-            textField: currentPostItem() ? currentPostItem().getPostText() : null
+            textField: page.currentPostItem() ? page.currentPostItem().getPostText() : null
         }
 
         SvgTransparentButton {
@@ -1149,7 +1148,7 @@ SkyPage {
                 const pickVideo = page.canAddVideo()
 
                 if (Qt.platform.os === "android") {
-                    pickingImage = postUtils.pickPhoto(pickVideo)
+                    page.pickingImage = postUtils.pickPhoto(pickVideo)
                 } else {
                     fileDialog.pick(pickVideo)
                 }
@@ -1162,7 +1161,7 @@ SkyPage {
             y: height + 5 + restrictionRow.height + footerSeparator.height
             enabled: page.canAddGif()
 
-            onSelectedGif: (gif) => currentPostItem().getGifAttachment().show(gif)
+            onSelectedGif: (gif) => page.currentPostItem().getGifAttachment().show(gif)
         }
 
         FontComboBox {
@@ -1182,12 +1181,12 @@ SkyPage {
             y: 5 + restrictionRow.height + footerSeparator.height + 6
             popup.x: Math.max(-x, Math.min(0, page.width - popup.width - x))
             popup.height: Math.min(page.height - 20, popup.contentHeight)
-            currentIndex: find(currentPostLanguage())
+            currentIndex: find(page.currentPostLanguage())
             reversedColors: languageUtils.isDefaultPostLanguageSet && currentValue === languageUtils.defaultPostLanguage
             focusPolicy: Qt.NoFocus
 
             onActivated: (index) => {
-                currentPostItem().language = valueAt(index)
+                page.currentPostItem().language = valueAt(index)
                 console.debug("ACTIVATED LANG:", valueAt(index))
 
                 if (!languageUtils.getDefaultLanguageNoticeSeen()) {
@@ -1215,8 +1214,8 @@ SkyPage {
             anchors.leftMargin: 8
             y: height + 5 + restrictionRow.height + footerSeparator.height
             accessibleName: qsTr("add content warning")
-            svg: hasContentWarning() ? SvgOutline.hideVisibility : SvgOutline.visibility
-            visible: hasImageContent()
+            svg: page.hasContentWarning() ? SvgOutline.hideVisibility : SvgOutline.visibility
+            visible: page.hasImageContent()
             onClicked: page.addContentWarning()
         }
 
@@ -1229,7 +1228,7 @@ SkyPage {
             anchors.right: parent.right
             svg: SvgOutline.add
             accessibleName: qsTr("add post")
-            enabled: hasFullContent() && threadPosts.count < maxThreadPosts
+            enabled: page.hasFullContent() && threadPosts.count < page.maxThreadPosts
             focusPolicy: Qt.NoFocus
             onClicked: {
                 Qt.inputMethod.commit()
@@ -1250,8 +1249,8 @@ SkyPage {
 
     ImageFileDialog {
         id: fileDialog
-        onImageSelected: (fileUri) => photoPicked(fileUri)
-        onVideoSelected: (fileUri) => videoPicked(fileUri)
+        onImageSelected: (fileUri) => page.photoPicked(fileUri)
+        onVideoSelected: (fileUri) => page.videoPicked(fileUri)
     }
 
     LinkCardReader {
@@ -1344,13 +1343,13 @@ SkyPage {
         skywalker: page.skywalker
 
         onPostOk: (uri, cid) => {
-            postedUris.push(uri)
+            page.postedUris.push(uri)
 
             if (!page.allowQuoting)
                 postUtils.addPostgate(uri, true, [])
 
             if (page.sendingThreadPost > -1)
-                sendNextThreadPost(uri, cid)
+                page.sendNextThreadPost(uri, cid)
             else if (page.restrictReply)
                 postUtils.addThreadgate(uri, cid, page.allowReplyMentioned, page.allowReplyFollowing, page.getReplyRestrictionListUris())
             else      
@@ -1360,12 +1359,12 @@ SkyPage {
         onPostFailed: (error) => page.postFailed(error)
 
         onThreadgateOk: {
-            threadGateCreated = true
+            page.threadGateCreated = true
 
             if (page.sendingThreadPost > -1)
-                sendNextThreadPost(threadFirstPostUri, threadFirstPostCid)
+                page.sendNextThreadPost(page.threadFirstPostUri, page.threadFirstPostCid)
             else
-                postDone()
+                page.postDone()
         }
 
         onThreadgateFailed: (error) => page.postFailed(error)
@@ -1375,35 +1374,35 @@ SkyPage {
         onPostProgress: (msg) => page.postProgress(msg)
 
         onPhotoPicked: (imgSource, gifTempFileName) => {
-            pickingImage = false
+            page.pickingImage = false
             page.photoPicked(imgSource, gifTempFileName)
-            currentPostItem().getPostText().forceActiveFocus()
+            page.currentPostItem().getPostText().forceActiveFocus()
         }
 
         onVideoPicked: (videoUrl) => {
-            pickingImage = false
-            editVideo(videoUrl)
+            page.pickingImage = false
+            page.editVideo(videoUrl)
         }
 
         onVideoPickedFailed: (error) => {
-            pickingImage = false
+            page.pickingImage = false
             statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
-            currentPostItem().getPostText().forceActiveFocus()
+            page.currentPostItem().getPostText().forceActiveFocus()
         }
 
         onPhotoPickFailed: (error) => {
-            pickingImage = false
+            page.pickingImage = false
             statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
-            currentPostItem().getPostText().forceActiveFocus()
+            page.currentPostItem().getPostText().forceActiveFocus()
         }
 
         onPhotoPickCanceled: {
-            pickingImage = false
-            currentPostItem().getPostText().forceActiveFocus()
+            page.pickingImage = false
+            page.currentPostItem().getPostText().forceActiveFocus()
         }
 
         onQuotePost: (uri, cid, text, author, timestamp) => {
-            let postItem = currentPostItem()
+            let postItem = page.currentPostItem()
             let postText = postItem.getPostText()
 
             if (!postText.firstPostLink)
@@ -1424,7 +1423,7 @@ SkyPage {
         }
 
         onQuoteFeed: (feed) => {
-            let postItem = currentPostItem()
+            let postItem = page.currentPostItem()
             let postText = postItem.getPostText()
 
             if (!postText.firstFeedLink)
@@ -1443,7 +1442,7 @@ SkyPage {
         }
 
         onQuoteList: (list) => {
-            let postItem = currentPostItem()
+            let postItem = page.currentPostItem()
             let postText = postItem.getPostText()
 
             if (!postText.firstListLink)
@@ -1462,7 +1461,7 @@ SkyPage {
 
         onVideoUploadLimits: (limits) => {
             busyIndicator.running = false
-            showVideoUploadLimits(limits)
+            page.showVideoUploadLimits(limits)
         }
 
         function checkVideoLimits(cbOk, cbFailed) {
@@ -1521,7 +1520,7 @@ SkyPage {
         onConversionOk: (videoFileName) => {
             progressDialog.destroy()
             page.tmpVideos.push("file://" + videoFileName)
-            editVideo(`file://${videoFileName}`)
+            page.editVideo(`file://${videoFileName}`)
         }
 
         onConversionFailed: (error) => {
@@ -1541,7 +1540,7 @@ SkyPage {
 
         function doCancel() {
             gifToVideoConverter.cancel()
-            let postItem = currentPostItem()
+            let postItem = page.currentPostItem()
 
             if (postItem)
                 postItem.getPostText().forceActiveFocus()
@@ -1628,13 +1627,13 @@ SkyPage {
         id: focusTimer
         interval: 200
         onTriggered: {
-            let postText = currentPostItem().getPostText()
+            let postText = page.currentPostItem().getPostText()
 
             if (!postText.text.startsWith("\n#")) // hashtag post
                 postText.cursorPosition = postText.text.length
 
             if (Boolean(page.initialVideo)) {
-                editVideo(page.initialVideo)
+                page.editVideo(page.initialVideo)
             }
             else {
                 postText.ensureVisible(Qt.rect(0, 0, postText.width, postText.height))

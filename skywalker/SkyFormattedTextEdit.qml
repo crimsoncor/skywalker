@@ -1,6 +1,4 @@
 import QtQuick
-import QtQuick.Controls
-import QtQuick.Layouts
 import skywalker
 
 TextEdit {
@@ -84,6 +82,8 @@ TextEdit {
     }
 
     onPreeditTextChanged: {
+        console.debug("PREEDIT:", preeditText)
+
         if (textChangeInProgress)
             return
 
@@ -97,11 +97,28 @@ TextEdit {
                                        editText.maxLength, guiSettings.textLengthExceededColor)
     }
 
-    // Keys.onReleased: (event) => {
-    //     // Work around for Qt6.7.2 which hides the keyboard on pressing return.
-    //     if (event.key === Qt.Key_Return)
+    // ALTERNATIVE HACK:
+    // This is an alternative for the hack below. However, it is more complicated at
+    // it captures the mouse events from the text edit field.
+    // MouseArea {
+    //     anchors.fill: parent
+    //     onPressed: (mouse) => {
+    //         Qt.inputMethod.commit()
+    //         editText.forceActiveFocus()
+    //         let position = editText.positionAt(mouse.x, mouse.y)
+    //         editText.cursorPosition = position
+    //         console.debug("TEXT EDIT TAPPED")
     //         Qt.inputMethod.show()
+    //     }
     // }
+
+    // HACK:
+    // Sometimes while editing and moving the cursor by tapping on the screen, the text
+    // sticks to the cursor, or the cursor begins to jump when typing. The commit on tap
+    // seems to prevent this.
+    TapHandler {
+        onTapped: Qt.inputMethod.commit()
+    }
 
     // Text can only be changed outside onPreeditTextChanged.
     // This timer makes the call to applyFont async.
@@ -117,7 +134,7 @@ TextEdit {
         }
 
         function set(num) {
-            if (!fontSelectorCombo || fontSelectorCombo.currentIndex === QEnums.FONT_NORMAL)
+            if (!editText.fontSelectorCombo || editText.fontSelectorCombo.currentIndex === QEnums.FONT_NORMAL)
                 return
 
             numChars = num
@@ -223,7 +240,7 @@ TextEdit {
         font.pointSize: editText.font.pointSize
         wrapMode: Text.Wrap
         color: guiSettings.placeholderTextColor
-        text: placeholderText
+        text: editText.placeholderText
         visible: editText.graphemeLength === 0
     }
 
@@ -247,7 +264,7 @@ TextEdit {
 
     SearchUtils {
         id: searchUtils
-        skywalker: parentPage.skywalker
+        skywalker: editText.parentPage.skywalker
 
         Component.onDestruction: {
             // The destuctor of SearchUtils is called too late by the QML engine
@@ -261,7 +278,7 @@ TextEdit {
         property double editTagCursorY: 0
 
         id: postUtils
-        skywalker: parentPage.skywalker
+        skywalker: editText.parentPage.skywalker
 
         onEditMentionChanged: {
             console.debug(editMention)
