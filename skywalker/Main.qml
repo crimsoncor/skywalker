@@ -79,10 +79,31 @@ ApplicationWindow {
         y: guiSettings.headerHeight
     }
 
+    Timer {
+        property int postIndex
+
+        id: timelineSyncTimer
+        interval: 200
+
+        onTriggered: {
+            root.getTimelineView().setInSync(postIndex)
+            skywalker.startTimelineAutoUpdate()
+        }
+
+        function go(index) {
+            postIndex = index
+            start()
+        }
+    }
+
+    // HACK
+    // Positioning of a listview is cumbersome, probably because of resizing of
+    // elements (images, etc.).
+    // Positioning it, wait 200ms and then positioning again seems to work nice.
     function syncTimelineToPost(postIndex) {
-        closeStartupStatus()
         getTimelineView().setInSync(postIndex)
-        skywalker.startTimelineAutoUpdate()
+        closeStartupStatus()
+        timelineSyncTimer.go(postIndex)
     }
 
     Skywalker {

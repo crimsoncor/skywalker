@@ -242,6 +242,7 @@ SkyListView {
     Component.onCompleted: {
         console.debug("Entry index:", postEntryIndex);
         view.model.onRowsInserted.connect(rowsInsertedHandler)
+        view.sync()
         syncTimer.start()
     }
 }

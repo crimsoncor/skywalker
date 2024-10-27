@@ -1,4 +1,4 @@
-pragma ComponentBehavior: Bound
+// TODO: causes crash, see addPost, pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Window 2.2
@@ -203,7 +203,7 @@ SkyPage {
                 AccessibleMenuItem {
                     text: qsTr("Merge posts")
                     enabled: threadPosts.count > 1
-                    onTriggered: threadPosts.mergePosts()
+                    onTriggered: threadColumn.mergePosts()
                 }
                 AccessibleMenuItem {
                     text: qsTr("Video limits")
@@ -468,7 +468,7 @@ SkyPage {
                                     splitting = false
 
                                     if (postItem.index === threadPosts.count - 1 || threadPosts.itemAt(postItem.index + 1).hasAttachment()) {
-                                        threadPosts.addPost(postItem.index, parts[1], moveCursor)
+                                        threadColumn.addPost(postItem.index, parts[1], moveCursor)
                                     }
                                     else {
                                         // Prepend excess text to next post
@@ -523,14 +523,14 @@ SkyPage {
 
                             postItem.quoteList = page.nullList
                             postItem.quoteFeed = page.nullFeed
-                            page.quoteUri = ""
+                            postItem.quoteUri = ""
 
                             if (firstPostLink)
                                 postUtils.getQuotePost(firstPostLink)
                         }
 
                         onCursorInFirstPostLinkChanged: {
-                            if (!cursorInFirstPostLink && page.quoteUri)
+                            if (!cursorInFirstPostLink && postItem.quoteUri)
                                 postItem.fixQuoteLink(true)
                         }
 
@@ -588,7 +588,7 @@ SkyPage {
                         accessibleName: qsTr("remove post")
                         visible: !postItem.hasContent() && threadPosts.count > 1 && (postItem.index > 0 || !page.replyToPostUri)
 
-                        onClicked: threadPosts.removePost(postItem.index)
+                        onClicked: threadColumn.removePost(postItem.index)
                     }
 
                     AccessibleText {
@@ -839,129 +839,130 @@ SkyPage {
                         item.copyFromPostList()
                     }
                 }
+            }
 
-                function removePost(index) {
-                    console.debug("REMOVE POST:", index)
+            function removePost(index) {
+                console.debug("REMOVE POST:", index)
 
-                    if (count === 1) {
-                        console.warn("Cannot remove last post")
-                        return
-                    }
-
-                    let item = itemAt(index)
-                    item.images.forEach((value, index, array) => { postUtils.dropPhoto(value); })
-
-                    if (Boolean(item.video))
-                        postUtils.dropVideo(item.video)
-
-                    copyPostItemsToPostList()
-
-                    if (index === 0 && openedAsQuotePost) {
-                        openedAsQuotePost = false
-                    }
-
-                    if (currentPostIndex === count - 1)
-                        currentPostIndex -= 1
-
-                    model = 0
-                    postList.splice(index, 1)
-                    model = postList.length
-
-                    copyPostListToPostItems()
-                    moveFocusToCurrent()
-                    console.debug("REMOVED POST:", index)
+                if (threadPosts.count === 1) {
+                    console.warn("Cannot remove last post")
+                    return
                 }
 
-                function addPost(index, text = "", focus = true) {
-                    console.debug("ADD POST:", index)
+                let item = threadPosts.itemAt(index)
+                item.images.forEach((value, index, array) => { postUtils.dropPhoto(value); })
 
-                    if (count >= maxThreadPosts) {
-                        console.warn("Maximum posts reached:", count)
-                        return
-                    }
+                if (Boolean(item.video))
+                    postUtils.dropVideo(item.video)
 
-                    const postItem = threadPosts.itemAt(currentPostIndex);
-                    const oldCursorPosition = postItem.getPostText().cursorPosition
-                    const lang = postItem.language
+                threadPosts.copyPostItemsToPostList()
 
-                    copyPostItemsToPostList()
-                    model = 0
-                    let newItem = newComposePostItem()
-                    newItem.language = lang
-                    postList.splice(index + 1, 0, newItem)
-                    model = postList.length
-                    copyPostListToPostItems()
-
-                    if (currentPostIndex === index && focus) {
-                        currentPostIndex += 1
-                        focusTimer.start()
-                    }
-                    else {
-                        setCursorTimer.startSetCursor(currentPostIndex, oldCursorPosition)
-                    }
-
-                    if (text)
-                        setPostTextTimer.startSetText(text, index + 1)
-
-                    console.debug("ADDED POST:", index)
+                if (index === 0 && page.openedAsQuotePost) {
+                    page.openedAsQuotePost = false
                 }
 
-                function mergePosts() {
-                    for (let i = 0; i < count; ++i) {
-                        let item = itemAt(i)
+                if (page.currentPostIndex === threadPosts.count - 1)
+                    page.currentPostIndex -= 1
 
-                        if (item.hasAttachment())
-                            continue
+                threadPosts.model = 0
+                threadPosts.postList.splice(index, 1)
+                threadPosts.model = threadPosts.postList.length
 
-                        let postText = item.getPostText()
-                        if (postText.text.length === postText.maxLength)
-                            continue
+                threadPosts.copyPostListToPostItems()
+                moveFocusToCurrent()
+                console.debug("REMOVED POST:", index)
+            }
 
-                        i = mergePostsAt(i)
-                    }
+            function addPost(index, text = "", focus = true) {
+                console.debug("ADD POST:", index, "current:", page.currentPostIndex)
+
+                if (threadPosts.count >= page.maxThreadPosts) {
+                    console.warn("Maximum posts reached:", threadPosts.count)
+                    return
                 }
 
-                function mergePostsAt(index) {
-                    if (index === count - 1)
-                        return index
+                const postItem = threadPosts.itemAt(page.currentPostIndex);
+                const oldCursorPosition = postItem.getPostText().cursorPosition
+                const lang = postItem.language
 
-                    let text = itemAt(index).getPostText().text
-                    let endIndex = index + 1
+                threadPosts.copyPostItemsToPostList()
+                threadPosts.model = 0 // TODO this causes a crash when ComponentBehavior = Bound
 
-                    while (endIndex < count) {
-                        let nextPost = itemAt(endIndex)
+                let newItem = threadPosts.newComposePostItem()
+                newItem.language = lang
+                threadPosts.postList.splice(index + 1, 0, newItem)
+                threadPosts.model = threadPosts.postList.length
+                threadPosts.copyPostListToPostItems()
 
-                        if (nextPost.hasAttachment())
-                            break
-
-                        text = joinPosts(text, nextPost.getPostText().text)
-                        ++endIndex
-                    }
-
-                    if (endIndex === index + 1)
-                        return index
-
-                    const maxLength = itemAt(endIndex - 1).getPostText().maxLength
-
-                    for (let i = index + 1; i < endIndex; ++i)
-                        threadPosts.removePost(index + 1)
-
-                    const parts = unicodeFonts.splitText(text, maxLength, page.minPostSplitLineLengths)
-                    threadPosts.itemAt(index).getPostText().text = parts[0].trim()
-
-                    for (let j = 1; j < parts.length; ++j) {
-                        threadPosts.addPost(index + j - 1, "", false)
-                        threadPosts.itemAt(index + j).getPostText().text = parts[j].trim()
-                    }
-
-                    return index + parts.length - 1
-                }
-
-                function moveFocusToCurrent() {
-                    let postText = page.currentPostItem().getPostText()
-                    postText.cursorPosition = postText.text.length
+                if (page.currentPostIndex === index && focus) {
+                    page.currentPostIndex += 1
                     focusTimer.start()
                 }
+                else {
+                    setCursorTimer.startSetCursor(currentPostIndex, oldCursorPosition)
+                }
+
+                if (text)
+                    setPostTextTimer.startSetText(text, index + 1)
+
+                console.debug("ADDED POST:", index)
+            }
+
+            function mergePosts() {
+                for (let i = 0; i < threadPosts.count; ++i) {
+                    let item = threadPosts.itemAt(i)
+
+                    if (item.hasAttachment())
+                        continue
+
+                    let postText = item.getPostText()
+                    if (postText.text.length === postText.maxLength)
+                        continue
+
+                    i = mergePostsAt(i)
+                }
+            }
+
+            function mergePostsAt(index) {
+                if (index === threadPosts.count - 1)
+                    return index
+
+                let text = threadPosts.itemAt(index).getPostText().text
+                let endIndex = index + 1
+
+                while (endIndex < threadPosts.count) {
+                    let nextPost = threadPosts.itemAt(endIndex)
+
+                    if (nextPost.hasAttachment())
+                        break
+
+                    text = page.joinPosts(text, nextPost.getPostText().text)
+                    ++endIndex
+                }
+
+                if (endIndex === index + 1)
+                    return index
+
+                const maxLength = threadPosts.itemAt(endIndex - 1).getPostText().maxLength
+
+                for (let i = index + 1; i < endIndex; ++i)
+                    threadColumn.removePost(index + 1)
+
+                const parts = unicodeFonts.splitText(text, maxLength, page.minPostSplitLineLengths)
+                threadPosts.itemAt(index).getPostText().text = parts[0].trim()
+
+                for (let j = 1; j < parts.length; ++j) {
+                    threadColumn.addPost(index + j - 1, "", false)
+                    threadPosts.itemAt(index + j).getPostText().text = parts[j].trim()
+                }
+
+                return index + parts.length - 1
+            }
+
+            function moveFocusToCurrent() {
+                let postText = page.currentPostItem().getPostText()
+                postText.cursorPosition = postText.text.length
+                focusTimer.start()
             }
         }
 
@@ -1232,7 +1233,7 @@ SkyPage {
             focusPolicy: Qt.NoFocus
             onClicked: {
                 Qt.inputMethod.commit()
-                threadPosts.addPost(currentPostIndex)
+                threadColumn.addPost(currentPostIndex)
             }
         }
     }

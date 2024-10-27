@@ -140,6 +140,7 @@ SkyListView {
         const last = getLastVisibleIndex()
         setAnchorItem(last + 1)
         updateUnreadPosts(index)
+        console.debug("INDEX:", index, "FIRST:", getFirstVisibleIndex(), "LAST:", last)
     }
 
     function calibrateUnreadPosts() {
