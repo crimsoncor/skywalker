@@ -1,6 +1,6 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import skywalker
 
 ListView {
@@ -61,9 +61,9 @@ ListView {
     }
 
     FlickableRefresher {
-        inProgress: skywalker.getAuthorListInProgress
-        topOvershootFun: () => refresh()
-        bottomOvershootFun: () => skywalker.getAuthorListNextPage(modelId)
+        inProgress: authorListView.skywalker.getAuthorListInProgress
+        topOvershootFun: () => authorListView.refresh()
+        bottomOvershootFun: () => authorListView.skywalker.getAuthorListNextPage(authorListView.modelId)
         topText: qsTr("Refresh")
     }
 
@@ -78,18 +78,18 @@ ListView {
         id: graphUtils
         skywalker: authorListView.skywalker
 
-        onFollowFailed: (error) => { statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR) }
-        onUnfollowFailed: (error) => { statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR) }
+        onFollowFailed: (error) => { authorListView.skywalker.showStatusMessage(error, QEnums.STATUS_LEVEL_ERROR) }
+        onUnfollowFailed: (error) => { authorListView.skywalker.showStatusMessage(error, QEnums.STATUS_LEVEL_ERROR) }
         onRemoveListUserFailed: (error) => {
-            statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
-            refresh()
+            authorListView.skywalker.showStatusMessage(error, QEnums.STATUS_LEVEL_ERROR)
+            authorListView.refresh()
         }
     }
 
     BusyIndicator {
         id: busyBottomIndicator
         anchors.centerIn: parent
-        running: skywalker.getAuthorListInProgress
+        running: authorListView.skywalker.getAuthorListInProgress
     }
 
     GuiSettings {

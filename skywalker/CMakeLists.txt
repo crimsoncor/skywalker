@@ -29,7 +29,7 @@ set_source_files_properties(SkyRoot.qml
 qt_add_qml_module(libskywalker
     URI skywalker
     VERSION ${PROJECT_VERSION}
-    RESOURCE_PREFIX /
+    IMPORT_PATH ..
     SOURCES
         skywalker.h
         skywalker.cpp

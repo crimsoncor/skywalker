@@ -1,10 +1,11 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Controls.Material
 import QtQuick.Layouts
 import skywalker
 
 SkyPage {
-    property int years: root.getSkywalker().getAnniversary().getAnniversaryYears()
+    property int years: SkyRoot.skywalker().getAnniversary().getAnniversaryYears()
 
     signal canceled
     signal addCard(string source, int years)
@@ -28,7 +29,7 @@ SkyPage {
             anchors.verticalCenter: parent.verticalCenter
             svg: SvgOutline.check
             accessibleName: qsTr("add card")
-            onClicked: addCard(anniversaryCard.imageSource, page.years)
+            onClicked: page.addCard(anniversaryCard.imageSource, page.years)
         }
     }
 
@@ -59,7 +60,7 @@ SkyPage {
 
             AccessibleText {
                 Layout.fillWidth: true
-                height: backgroundButton.height
+                Layout.preferredHeight: backgroundButton.height
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
                 text: qsTr("Background")
@@ -78,7 +79,7 @@ SkyPage {
 
             AccessibleText {
                 Layout.fillWidth: true
-                height: logoButton.height
+                Layout.preferredHeight: logoButton.height
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
                 text: qsTr("Logo")
@@ -97,7 +98,7 @@ SkyPage {
 
             AccessibleText {
                 Layout.fillWidth: true
-                height: ageButton.height
+                Layout.preferredsHeight: ageButton.height
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
                 text: qsTr("Number")

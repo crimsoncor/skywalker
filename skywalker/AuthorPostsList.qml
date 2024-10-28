@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -18,16 +19,16 @@ SkyListView {
     id: authorPostsList
     width: parent.width
     height: parent.height
-    model: modelId >= 0 ? skywalker.getAuthorFeedModel(page.modelId) : null
+    model: modelId >= 0 ? SkyRoot.skywalker().getAuthorFeedModel(modelId) : null
     interactive: !enclosingView.interactive
 
     StackLayout.onIsCurrentItemChanged: {
         if (!StackLayout.isCurrentItem)
             cover()
 
-        if (StackLayout.isCurrentItem && modelId < 0 && !skywalker.getAuthorFeedInProgress) {
-            modelId = skywalker.createAuthorFeedModel(author, feedFilter)
-            model = skywalker.getAuthorFeedModel(modelId)
+        if (StackLayout.isCurrentItem && modelId < 0 && !SkyRoot.skywalker().getAuthorFeedInProgress) {
+            modelId = SkyRoot.skywalker().createAuthorFeedModel(author, feedFilter)
+            model = SkyRoot.skywalker().getAuthorFeedModel(modelId)
             getFeed(modelId)
         }
     }
@@ -38,18 +39,18 @@ SkyListView {
     }
 
     delegate: PostFeedViewDelegate {
-        width: enclosingView.width
+        width: authorPostsList.enclosingView.width
     }
 
     FlickableRefresher {
-        inProgress: skywalker.getAuthorFeedInProgress
+        inProgress: SkyRoot.skywalker().getAuthorFeedInProgress
         topOvershootFun: () => {
-            if (modelId >= 0)
-                getFeed(modelId)
+            if (authorPostsList.modelId >= 0)
+                authorPostsList.getFeed(authorPostsList.modelId)
         }
         bottomOvershootFun: () => {
-            if (modelId >= 0)
-                getFeedNextPage(modelId)
+            if (authorPostsList.modelId >= 0)
+                authorPostsList.getFeedNextPage(authorPostsList.modelId)
         }
         topText: qsTr("Pull down to refresh")
     }
@@ -57,15 +58,15 @@ SkyListView {
     BusyIndicator {
         id: busyIndicator
         anchors.centerIn: parent
-        running: skywalker.getAuthorFeedInProgress
+        running: SkyRoot.skywalker().getAuthorFeedInProgress
     }
 
     EmptyListIndication {
         id: noPostIndication
-        svg: getEmptyListIndicationSvg()
-        text: getEmptyListIndicationText()
+        svg: authorPostsList.getEmptyListIndicationSvg()
+        text: authorPostsList.getEmptyListIndicationText()
         list: authorPostsList
-        onLinkActivated: (link) => root.viewListByUri(link, false)
+        onLinkActivated: (link) => SkyRoot.root.viewListByUri(link, false)
     }
     Text {
         anchors.top: noPostIndication.bottom
@@ -73,8 +74,8 @@ SkyListView {
         elide: Text.ElideRight
         textFormat: Text.RichText
         text: `<br><a href=\"show\" style=\"color: ${guiSettings.linkColor}\">` + qsTr("Show profile") + "</a>"
-        visible: visibilityShowProfileLink(authorPostsList)
-        onLinkActivated: disableWarning()
+        visible: authorPostsList.visibilityShowProfileLink(authorPostsList)
+        onLinkActivated: authorPostsList.disableWarning()
     }
 
     Timer {
@@ -84,9 +85,9 @@ SkyListView {
         id: retryGetFeedTimer
         interval: 500
         onTriggered: {
-            if (modelId >= 0) {
-                console.debug("RETRY GET FEED:", modelId)
-                getFeed(modelId)
+            if (authorPostsList.modelId >= 0) {
+                console.debug("RETRY GET FEED:", authorPostsList.modelId)
+                authorPostsList.getFeed(authorPostsList.modelId)
             }
             else {
                 console.debug("NO MODEL")
@@ -130,14 +131,14 @@ SkyListView {
 
     function clear() {
         if (modelId >= 0)
-            skywalker.clearAuthorFeed(modelId)
+            SkyRoot.skywalker().clearAuthorFeed(modelId)
     }
 
     function removeModel() {
         if (modelId >= 0) {
             const id = modelId
             modelId = -1
-            skywalker.removeAuthorFeedModel(id)
+            SkyRoot.skywalker().removeAuthorFeedModel(id)
         }
     }
 

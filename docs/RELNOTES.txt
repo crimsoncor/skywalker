@@ -1,6 +1,7 @@
 next
 ====
 * Search button on keyboard
+* Increase ALT text maximum length to 2000
 
 3.5
 ===

@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import skywalker
 
@@ -26,7 +25,7 @@ RoundedFrame {
         anchors.fill: img
         cursorShape: Qt.PointingHandCursor
         enabled: filter.imageVisible()
-        onClicked: root.viewFullAnimatedImage(url, title)
+        onClicked: SkyRoot.root.viewFullAnimatedImage(frame.url, frame.title)
     }
     FilteredImageWarning {
         id: filter
