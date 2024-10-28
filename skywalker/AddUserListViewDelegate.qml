@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import skywalker
 
@@ -29,18 +28,16 @@ Rectangle {
         Rectangle {
             Layout.columnSpan: 3
             Layout.fillWidth: true
-            height: 10
+            Layout.preferredHeight: 10
             color: "transparent"
         }
 
         ListAvatar {
-            Layout.leftMargin: view.margin
-            Layout.rightMargin: view.margin
-            x: 8
-            y: 5
-            width: 44
+            Layout.leftMargin: view.margin + 8
+            Layout.rightMargin: view.margin + 5
+            Layout.preferredWidth: 44
             Layout.alignment: Qt.AlignTop
-            avatarUrl: list.avatarThumb
+            avatarUrl: view.list.avatarThumb
         }
 
         Column {
@@ -55,7 +52,7 @@ Rectangle {
                 elide: Text.ElideRight
                 font.bold: true
                 color: guiSettings.textColor
-                plainText: list.name
+                plainText: view.list.name
 
                 Accessible.ignored: true
             }
@@ -66,7 +63,7 @@ Rectangle {
                 elide: Text.ElideRight
                 font.pointSize: guiSettings.scaledFont(7/8)
                 color: guiSettings.handleColor
-                text: guiSettings.listTypeName(list.purpose)
+                text: guiSettings.listTypeName(view.list.purpose)
 
                 Accessible.ignored: true
             }
@@ -78,7 +75,7 @@ Rectangle {
                 elide: Text.ElideRight
                 font.pointSize: guiSettings.scaledFont(7/8)
                 color: guiSettings.handleColor
-                text: `@${listCreator.handle}`
+                text: `@${view.listCreator.handle}`
 
                 Accessible.ignored: true
             }
@@ -86,10 +83,10 @@ Rectangle {
 
         SvgButton {
             Layout.alignment: Qt.AlignTop
-            svg: memberCheck === QEnums.TRIPLE_BOOL_YES ? SvgOutline.remove : SvgOutline.add
-            accessibleName: memberCheck === QEnums.TRIPLE_BOOL_YES ? qsTr("add") : qsTr("remove")
-            visible: memberCheck !== QEnums.TRIPLE_BOOL_UNKNOWN
-            onClicked: updateList()
+            svg: view.memberCheck === QEnums.TRIPLE_BOOL_YES ? SvgOutline.remove : SvgOutline.add
+            accessibleName: view.memberCheck === QEnums.TRIPLE_BOOL_YES ? qsTr("add") : qsTr("remove")
+            visible: view.memberCheck !== QEnums.TRIPLE_BOOL_UNKNOWN
+            onClicked: view.updateList()
         }
 
         Rectangle {

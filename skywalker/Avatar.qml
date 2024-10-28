@@ -1,13 +1,12 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
 import skywalker
 
 Item {
     property basicprofile author
     property int radius: width / 2
     property SvgImage unknownSvg: SvgFilled.unknownAvatar
-    readonly property int contentVisibility: root.getSkywalker().getContentVisibility(author.labels)
+    readonly property int contentVisibility: SkyRoot.skywalker().getContentVisibility(author.labels)
     property bool showWarnedMedia: false
     readonly property bool showThumb: width < 90 // from bsky client code
     property string avatarUrl: !contentVisible() ? "" : (showThumb ? author.avatarThumbUrl : author.avatarUrl)
@@ -17,6 +16,7 @@ Item {
 
     id: avatarItem
     height: width
+    Layout.preferredHeight: Layout.preferredWidth
 
     RoundedFrame {
         id: avatarFrame
@@ -24,12 +24,12 @@ Item {
         width: parent.width
         height: parent.height
         radius: parent.radius
-        visible: avatarUrl && avatarImg.status === Image.Ready
+        visible: avatarItem.avatarUrl && avatarImg.status === Image.Ready
 
         ImageAutoRetry {
             id: avatarImg
             width: parent.width
-            source: avatarUrl
+            source: avatarItem.avatarUrl
             fillMode: Image.PreserveAspectFit
             maxRetry: 60
         }
@@ -45,7 +45,7 @@ Item {
             width: parent.width
             height: parent.height
             color: "white"
-            svg: author.associated.isLabeler ? SvgFilled.moderator : avatarItem.unknownSvg
+            svg: avatarItem.author.associated.isLabeler ? SvgFilled.moderator : avatarItem.unknownSvg
         }
     }
     MouseArea {
@@ -62,7 +62,7 @@ Item {
 
     ModeratorIcon {
         width: parent.width * 0.6
-        visible: author.associated.isLabeler
+        visible: avatarItem.author.associated.isLabeler
     }
 
     GuiSettings {

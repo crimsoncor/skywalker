@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import skywalker
 
 SvgTransparentButton {
@@ -17,7 +16,7 @@ SvgTransparentButton {
         if (!tenorSearchView)
         {
             let component = Qt.createComponent("TenorSearch.qml")
-            tenorSearchView = component.createObject(root)
+            tenorSearchView = component.createObject(SkyRoot.root)
             tenorSearchView.onClosed.connect(() => { root.currentStack().pop() })
             tenorSearchView.onSelected.connect((gif) => {
                     addGifButton.selectedGif(gif)

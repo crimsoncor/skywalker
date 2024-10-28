@@ -1,6 +1,6 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import skywalker
 
 ListView {
@@ -21,7 +21,7 @@ ListView {
 
     header: SimpleDescriptionHeader {
         title: qsTr("Update lists")
-        description: qsTr(`Add/remove ${author.name}`)
+        description: qsTr(`Add/remove ${view.author.name}`)
         onClosed: view.closed()
     }
     headerPositioning: ListView.OverlayHeader
@@ -29,13 +29,13 @@ ListView {
     delegate: AddUserListViewDelegate {
         width: view.width
 
-        onAddToList: (listUri) => graphUtils.addListUser(listUri, author)
+        onAddToList: (listUri) => graphUtils.addListUser(listUri, view.author)
         onRemoveFromList: (listUri, listItemUri) => graphUtils.removeListUser(listUri, listItemUri)
     }
 
     FlickableRefresher {
-        inProgress: skywalker.getListListInProgress
-        bottomOvershootFun: () => skywalker.getListListNextPage(modelId)
+        inProgress: view.skywalker.getListListInProgress
+        bottomOvershootFun: () => view.skywalker.getListListNextPage(view.modelId)
     }
 
     EmptyListIndication {
@@ -47,15 +47,15 @@ ListView {
 
     BusyIndicator {
         anchors.centerIn: parent
-        running: skywalker.getListListInProgress
+        running: view.skywalker.getListListInProgress
     }
 
     GraphUtils {
         id: graphUtils
         skywalker: view.skywalker
 
-        onAddListUserFailed: (error) => statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
-        onRemoveListUserFailed: (error) => statusPopup.show(error, QEnums.STATUS_LEVEL_ERROR)
+        onAddListUserFailed: (error) => view.skywalker.showStatusMessage(error, QEnums.STATUS_LEVEL_ERROR)
+        onRemoveListUserFailed: (error) => view.skywalker.showStatusMessage(error, QEnums.STATUS_LEVEL_ERROR)
 
     }
 
