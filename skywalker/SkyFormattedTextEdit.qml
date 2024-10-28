@@ -100,25 +100,25 @@ TextEdit {
     // ALTERNATIVE HACK:
     // This is an alternative for the hack below. However, it is more complicated at
     // it captures the mouse events from the text edit field.
-    // MouseArea {
-    //     anchors.fill: parent
-    //     onPressed: (mouse) => {
-    //         Qt.inputMethod.commit()
-    //         editText.forceActiveFocus()
-    //         let position = editText.positionAt(mouse.x, mouse.y)
-    //         editText.cursorPosition = position
-    //         console.debug("TEXT EDIT TAPPED")
-    //         Qt.inputMethod.show()
-    //     }
-    // }
+    MouseArea {
+        anchors.fill: parent
+        onPressed: (mouse) => {
+            Qt.inputMethod.commit()
+            editText.forceActiveFocus()
+            let position = editText.positionAt(mouse.x, mouse.y)
+            editText.cursorPosition = position
+            Qt.inputMethod.show()
+        }
+    }
 
     // HACK:
     // Sometimes while editing and moving the cursor by tapping on the screen, the text
     // sticks to the cursor, or the cursor begins to jump when typing. The commit on tap
     // seems to prevent this.
-    TapHandler {
-        onTapped: Qt.inputMethod.commit()
-    }
+    // This hack does not work.
+    // TapHandler {
+    //     onTapped: Qt.inputMethod.commit()
+    // }
 
     // Text can only be changed outside onPreeditTextChanged.
     // This timer makes the call to applyFont async.
