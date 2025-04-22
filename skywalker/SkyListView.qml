@@ -125,6 +125,11 @@ ListView {
         return indexAt(0, contentY + height - 1)
     }
 
+    // Given an index, get the post time for the given post.
+    function getTimeFromIndex(index) {
+        const item = itemAtIndex(index)
+    }
+
     // Calculate offset from bottom of visible section.
     // A positive offset means that the item is partly scrolled down the bottom.
     function calcVisibleOffsetY(index) {

@@ -17,6 +17,7 @@ Rectangle {
     property bool footerVisible: true
 
     signal homeClicked()
+    signal homePressed()
     signal notificationsClicked()
     signal searchClicked()
     signal feedsClicked()
@@ -46,6 +47,7 @@ Rectangle {
             altBadgeSvg: SvgOutline.feed
             Accessible.name: getHomeSpeech()
             onClicked: homeClicked()
+            onPressAndHold: homePressed()
         }
 
         SkyFooterButton {

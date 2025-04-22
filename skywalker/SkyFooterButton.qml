@@ -14,6 +14,7 @@ Rectangle {
     property SvgImage altBadgeSvg
 
     signal clicked
+    signal pressAndHold
 
     id: button
     color: "transparent"
@@ -79,5 +80,6 @@ Rectangle {
     MouseArea {
         anchors.fill: button
         onClicked: button.clicked()
+        onPressAndHold: button.pressAndHold()
     }
 }

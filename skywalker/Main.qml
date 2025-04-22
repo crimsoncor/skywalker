@@ -143,6 +143,7 @@ ApplicationWindow {
         homeActive: true
         extraFooterMargin: getExtraFooterMargin()
         onHomeClicked: favoritesSwipeView.currentView.moveToHome()
+        onHomePressed: favoritesSwipeView.currentView.goto()
         onNotificationsClicked: viewNotifications()
         onSearchClicked: viewSearchView()
         onFeedsClicked: viewFeedsView()

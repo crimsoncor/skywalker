@@ -337,6 +337,10 @@ SkyListView {
         updateFeedUnreadPosts()
     }
 
+    function goto() {
+
+    }
+
     function atStart() {
         if (mediaTilesLoader.item)
             return mediaTilesLoader.item.atYBeginning
